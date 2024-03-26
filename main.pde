@@ -1,45 +1,78 @@
 PShape monde;
-PImage texture;
-PShader shader;
-float px,py,pz,dx=1,dy=0,dz=0;
-int anim= 0, rotate;
-float xmin = -135, xmax = 127, ymin = -158, 
-  ymax= 159, zmin = -202.09592, zmax = -179.59933;
+PShader fragmentShader;
+
+float camX = width/2.0;
+float camY = height/2.0;
+float camZ = 0;
+
+float posX = 0;
+float posY = 0;
+float posZ = -100;
+
+float alpha = -PI;
+float beta = 0;
+
+float anime = 0;
+float zoom = 0;
+
+
+
+float angleX, angleY;
+float distance = 500;
 
 void setup(){
   size(1200, 1200 , P3D);
   frameRate(40);
-  monde = createShape();
   monde = loadShape("HYPERSIMPLE/hypersimple.obj");
-  px =0;
-  py = 0;
-  pz = zmax;
-}
-
-void advance_cam(){
-  camera(px-dx*anim/20,py-dy*anim/20,pz-dz*anim/20, px,py,pz,0,0,-1);
+ 
+  
+  angleX = 0; // Initial rotation angle around X-axis
+  angleY = 0; // Initial rotation angle around Y-axis
 }
 
 void draw(){
-  background(200,200,200);
-  shape(monde , 0,0);
-  translate(-(abs(xmin)+abs(xmax))/2,-(abs(ymax)+abs(ymin))/2,zmax);
-  float fov = PI/3.0;
-  float cameraZ = (height/2.0) / tan(fov/2.0);
-  perspective(PI/3.,width*1.2/height, 0.5, 10*cameraZ);
-  if (anim >0) {
-    advance_cam();
-    anim--;
-  }
+  background(128,128,128);
+ shape(monde,0,0);
+  
+
+  camX = 100 *sin(alpha)*cos(beta) ;
+  camY = 100* sin(alpha)*sin(beta);
+  camZ = 100 * cos(alpha);
+  
+
+  
+
+  perspective(PI/1.5 - sin(anime/10.0*PI)/15 + zoom, width/height, 0.01, 500);
+  camera(posX,posY,posZ,posX + camX,posY + camY, posZ + camZ, 0, 0,-1);
+
+  translate(width/2, height/2, 0);
+
+  
+}
+void mouseDragged() {
+  float db = (float)(mouseX - pmouseX) / width * TWO_PI;
+  float dalpha = (float)(mouseY - pmouseY) / height * PI; 
+  beta += db;
+  alpha += dalpha;
 }
 
-void keyPressed() {
-  if (anim == 0 && rotate==0){
-    if (keyCode == UP) {
-      anim = 20;
-      px += dx*10;
-      py += dy*10;
-      pz += dz*10;
-    }
+void keyPressed(){
+  if(keyCode == UP){
+    anime = 20; 
+  }
+  else if(keyCode == LEFT){
+    zoom -= PI/20;
+  }
+  else  if(keyCode == RIGHT){
+    zoom += PI/20;
+  }
+  else  if(keyCode == ' '){
+      camX = width/2.0;
+      camY = height/2.0;
+      camZ = 0;
+
+      posX = 0;
+      posY = 0;
+      posZ = -100;
   }
 }
