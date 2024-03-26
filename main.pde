@@ -17,11 +17,14 @@ float alpha = -PI;
 float beta = 0;
 
 float anime = 0.0;
+float anime_total = 10.0;
 float zoom = 0;
 float anime_duration = 10.0;
 
 float angleX, angleY;
 float distance = 100;
+
+boolean move_forward = false;
 
 void setup(){
   size(1200, 1200 , P3D);
@@ -34,10 +37,10 @@ void setup(){
 }
 
 void draw(){
-  if(anime >0)
-    anime-= 1.0;
+  if(anime >0) anime-= 1.0;
+  else if (anime ==0) anime_total =anime_duration;
   background(128,128,128);
- shape(monde,0,0);
+  shape(monde,0,0);
   
 
   camX = distance *sin(alpha)*cos(beta) ;
@@ -46,31 +49,34 @@ void draw(){
   dx = camX/20;
   dy = camY/20;
   dz = camZ/20;
-
   
-  camera(posX-dx*anime/20,posY-dy*anime/20,posZ-dz*anime/20,posX + camX,posY + camY, posZ + camZ, 0, 0,-1);
+  
+  camera(posX-dx*anime/anime_total,posY-dy*anime/anime_total,posZ-dz*anime/anime_total,posX + camX,posY + camY, posZ + camZ, 0, 0,-1);
   perspective(PI/2 - sin(anime/10.0*PI)/15 + zoom, width/height, 0.01, 500);
   
-
+  if(move_forward){
+    anime += anime_duration; 
+    anime_total += anime_duration;
+    posX += dx*0.2;
+    posY += dy*0.2;
+    posZ += dz*0.2;
+  }
   translate(width/2, height/2, 0);
 
   
 }
 void mouseDragged() {
   float db = (float)(mouseX - pmouseX) / width * TWO_PI;
-  float dalpha = (float)(mouseY - pmouseY) / height * PI; 
+  float dalpha = (float)(mouseY - pmouseY) / height * PI;
+  if(abs(alpha+dalpha) <PI-0.02){
+    alpha += dalpha;
+  }
   beta += db;
-  alpha += dalpha;
 }
 
 void keyPressed(){
   if(keyCode == UP){
-    anime = anime_duration; 
-    posX += dx;
-    posY += dy;
-    posZ += dz;
-    
-    
+    move_forward = true; 
   }
   if(keyCode == DOWN){
     anime = anime_duration; 
@@ -95,4 +101,8 @@ void keyPressed(){
       posY = 0;
       posZ = -100;
   }
+}
+
+void keyReleased(){
+  if(keyCode == UP) move_forward = false;
 }
