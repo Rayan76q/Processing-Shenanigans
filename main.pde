@@ -1,5 +1,5 @@
 PShape monde;
-PShader fragmentShader;
+PShader myShader;
 
 float camX = width/2.0;
 float camY = height/2.0;
@@ -9,9 +9,8 @@ float posX = 0;
 float posY = 0;
 float posZ = -100;
 
-float dx;
-float dy;
-float dz;
+float dx,dy,dz,difX,difY,difZ;
+
 
 float alpha = -PI;
 float beta = 0;
@@ -30,15 +29,21 @@ void setup(){
   size(1200, 1200 , P3D);
   frameRate(40);
   monde = loadShape("HYPERSIMPLE/hypersimple.obj");
- 
+  myShader = loadShader("myFragmentShader.glsl",
+               "myVertexShader.glsl");
   
   angleX = 0; 
   angleY = 0; 
 }
 
 void draw(){
+  shader(myShader);
   if(anime >0) anime-= 1.0;
-  else if (anime ==0) anime_total =anime_duration;
+  else if (anime ==0){ anime_total = 0;
+    difX =0;
+    difY=0;
+    difZ=0;
+  }
   background(128,128,128);
   shape(monde,0,0);
   
@@ -46,20 +51,28 @@ void draw(){
   camX = distance *sin(alpha)*cos(beta) ;
   camY = distance* sin(alpha)*sin(beta);
   camZ = distance * cos(alpha);
-  dx = camX/20;
-  dy = camY/20;
-  dz = camZ/20;
+  dx = camX*0.1;
+  dy = camY*0.1;
+  dz = camZ*0.1;
   
-  
-  camera(posX-dx*anime/anime_total,posY-dy*anime/anime_total,posZ-dz*anime/anime_total,posX + camX,posY + camY, posZ + camZ, 0, 0,-1);
+  if(anime_total > 0){
+  camera(posX-difX*anime/anime_total,posY-difY*anime/anime_total,posZ-difZ*anime/anime_total,posX + camX,posY + camY, posZ + camZ, 0, 0,-1);
+  }
+  else{
+    camera(posX,posY,posZ,posX + camX,posY + camY, posZ + camZ, 0, 0,-1);
+  }
   perspective(PI/2 - sin(anime/10.0*PI)/15 + zoom, width/height, 0.01, 500);
   
   if(move_forward){
     anime += anime_duration; 
     anime_total += anime_duration;
-    posX += dx*0.2;
-    posY += dy*0.2;
-    posZ += dz*0.2;
+    posX += dx;
+    posY += dy;
+    posZ += dz;
+    
+    difX += dx;
+    difY += dy;
+    difZ += dz;
   }
   translate(width/2, height/2, 0);
 
