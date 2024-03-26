@@ -3,24 +3,21 @@ precision mediump float;
 precision mediump int;
 #endif
 
-uniform mat4 modelview;
-uniform mat4 transform;
-uniform mat3 normalMatrix;
 
-uniform vec4 lightPosition;
-
-//varying vec4 vertColor;
-varying vec3 vertNormal;
-varying vec4 vertPosition;
 varying vec4 vertColor;
+varying vec3 vertNormal;
+varying vec3 vertLightDir;
+varying vec4 vertexCoord;
+
 
 void main() {
-  vec3 ecPosition = vec3(modelview * vertPosition);  
-  vec3 ecNormal = normalize(normalMatrix * vertNormal);
+  vec4 color;
+  color = vec4(1.0);
+  float z = vertexCoord.z;
+  if( floatBitsToInt(z)%50<=10){
+    color = vec4(vec3(1.0), 1.0);
+  }
+  
 
-  vec3 direction = normalize(lightPosition.xyz - ecPosition);    
-  float intensity = max(0.0, dot(direction, ecNormal));
-
-  gl_FragColor = vec4(intensity, intensity, intensity, 1) * vertColor; 
-  //gl_FragColor = vertColor;
-}
+  gl_FragColor = color * vertColor;
+} 
