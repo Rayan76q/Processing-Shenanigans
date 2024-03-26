@@ -67,15 +67,15 @@ void draw(){
 }
 void mouseDragged() {
   float db = (float)(mouseX - pmouseX) / width * TWO_PI;
-  float dalpha = (float)(mouseY - pmouseY) / height * PI;
-  if(abs(alpha+dalpha) <PI-0.02){
+  float dalpha = (float)(-mouseY + pmouseY) / height * PI;
+  if(abs(alpha+dalpha) <PI-0.02 && alpha+dalpha <0){
     alpha += dalpha;
   }
   beta += db;
 }
 
 void keyPressed(){
-  if(keyCode == UP){
+  if(keyCode == UP || keyCode==  87){
     move_forward = true; 
   }
   if(keyCode == DOWN){
@@ -104,5 +104,5 @@ void keyPressed(){
 }
 
 void keyReleased(){
-  if(keyCode == UP) move_forward = false;
+  if(keyCode == UP || keyCode == 87) move_forward = false;
 }
