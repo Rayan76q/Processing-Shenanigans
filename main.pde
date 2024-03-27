@@ -74,7 +74,7 @@ void draw(){
     difY += dy;
     difZ += dz;
   }
-  translate(width/2, height/2, 0);
+  
 
   
 }
