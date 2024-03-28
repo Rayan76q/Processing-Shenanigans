@@ -1,29 +1,19 @@
 PShape monde;
 PShader myShader;
 
-float camX = width/2.0;
-float camY = height/2.0;
-float camZ = 0;
-
-float posX = 0;
-float posY = 0;
-float posZ = -100;
-
-float dx,dy,dz,difX,difY,difZ;
-
+float camX = width/2.0,camY = height/2.0,camZ = 0;
+float posX = 0,posY = 0 ,posZ = -100;
+float ex,ey,ez,vitesse = 2;
 
 float alpha = -PI;
 float beta = 0;
 
-float anime = 0.0;
-float anime_total = 10.0;
 float zoom = 0;
-float anime_duration = 10.0;
 
 float angleX, angleY;
 float distance = 100;
 
-boolean move_forward = false;
+boolean move_forward = false, move_left = false , move_right = false , move_backward = false , move_up = false , move_down = false;
 
 void setup(){
   size(1200, 1200 , P3D);
@@ -38,43 +28,46 @@ void setup(){
 
 void draw(){
   shader(myShader);
-  if(anime >0) anime-= 1.0;
-  else if (anime ==0){ anime_total = 0;
-    difX =0;
-    difY=0;
-    difZ=0;
-  }
+ 
   background(128,128,128);
   shape(monde,0,0);
   
+  ex = sin(alpha)*cos(beta);
+  ey =  sin(alpha)*sin(beta);
+  ez = cos(alpha);
 
-  camX = distance *sin(alpha)*cos(beta) ;
-  camY = distance* sin(alpha)*sin(beta);
-  camZ = distance * cos(alpha);
-  dx = camX*0.1;
-  dy = camY*0.1;
-  dz = camZ*0.1;
+  camX = distance *ex ;
+  camY = distance* ey;
+  camZ = distance * ez;
   
-  if(anime_total > 0){
-  camera(posX-difX*anime/anime_total,posY-difY*anime/anime_total,posZ-difZ*anime/anime_total,posX + camX,posY + camY, posZ + camZ, 0, 0,-1);
-  }
-  else{
-    camera(posX,posY,posZ,posX + camX,posY + camY, posZ + camZ, 0, 0,-1);
-  }
-  perspective(PI/2 - sin(anime/10.0*PI)/15 + zoom, width/height, 0.01, 500);
+  
+ 
+   camera(posX,posY,posZ,posX + camX,posY + camY, posZ + camZ, 0, 0,-1);
+  
+  perspective(PI/2 + zoom, width/height, 0.01, 500);
   
   if(move_forward){
-    anime += anime_duration; 
-    anime_total += anime_duration;
-    posX += dx;
-    posY += dy;
-    posZ += dz;
-    
-    difX += dx;
-    difY += dy;
-    difZ += dz;
+    posY += ey*vitesse;
+    posX += ex*vitesse;
   }
-  
+  if(move_backward){
+    posY -= ey*vitesse;
+    posX -= ex*vitesse;
+  }
+  if(move_left){
+    posX += ey*vitesse;
+    posY += -ex*vitesse;
+  }
+  if(move_right){
+    posX -= ey*vitesse;
+    posY -= -ex*vitesse;
+  }
+  if(move_up){
+    posZ +=vitesse;
+  }
+  if(move_down){
+    posZ -=vitesse;
+  }
 
   
 }
@@ -88,24 +81,27 @@ void mouseDragged() {
 }
 
 void keyPressed(){
-  if(keyCode == UP || keyCode==  87){
-    move_forward = true; 
+  if(keyCode == UP || keyCode ==  87) move_forward = true; 
+  if(keyCode == DOWN || keyCode == 83) move_backward = true;
+  if(keyCode == LEFT|| keyCode == 81)move_left = true;
+  if(keyCode == RIGHT || keyCode == 68) move_right = true;
+  if(keyCode == 17) move_down = true;//ctrl
+  if(keyCode == 16) move_up =true;//shift
+  
+  //zooming  ()
+  if(keyCode ==75){//K
+    if(zoom < PI/2){
+      zoom += PI/20;
+    }
   }
-  if(keyCode == DOWN){
-    anime = anime_duration; 
-    posX -= dx;
-    posY -= dy;
-    posZ -= dz;
-    
-    
+  if(keyCode == 76){//L
+    if(zoom > PI/){
+      zoom -= PI/20;
+    }
   }
-  else if(keyCode == LEFT){
-    zoom -= PI/20;
-  }
-  else  if(keyCode == RIGHT){
-    zoom += PI/20;
-  }
-  else  if(keyCode == ' '){
+  
+  
+  if(keyCode == ' '){
       camX = width/2.0;
       camY = height/2.0;
       camZ = 0;
@@ -118,4 +114,10 @@ void keyPressed(){
 
 void keyReleased(){
   if(keyCode == UP || keyCode == 87) move_forward = false;
+  if(keyCode == DOWN || keyCode == 83) move_backward = false;
+  if(keyCode == LEFT || keyCode == 81) move_left = false;
+  if(keyCode == RIGHT || keyCode == 68) move_right = false;
+  if(keyCode == 17)move_down = false;
+  if(keyCode == 16)move_up = false;
+  
 }
