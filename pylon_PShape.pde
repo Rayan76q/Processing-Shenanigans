@@ -1,26 +1,36 @@
 PShape pylon_block[];
 int nb_Pylons=9;
-PShape cone;
+PShape pylone;
 int size = 20;
 float coneSize = 5*size*pow(0.9,nb_Pylons);
-//void setup() {
-//  size(400, 400, P3D);
-//  cone = myCone(coneSize,200);
-//  createPylonBlocss(size);
-//}
+void setup() {
+ size(400, 400, P3D);
+  createPylonBlocss(size);
+  pylone = Create_Pylon(0,0,0);
+}
 
-PShape myCone(float sideSize, int nbSide){
+PShape myCone(float sideSize, int nbSide,float x, float y, float z, boolean left){
   PShape shape0 = createShape();
   shape0.beginShape(TRIANGLE_FAN);
   shape0.fill(128);
   shape0.noStroke();
-  shape0.vertex(0,0,0);
-  for (int i=0; i<=nbSide; i++){
-    shape0.vertex(sideSize/4*cos(i*2*PI/nbSide),
-                  sideSize/4*sin(i*2*PI/nbSide),
-                  sideSize);
+  shape0.vertex(x,y,z);
+  if(left){
+    for (int i=0; i<=nbSide; i++){
+      shape0.vertex(x+sideSize,
+                    y+sideSize/4*sin(i*2*PI/nbSide),
+                    z+sideSize/4*cos(i*2*PI/nbSide));
+    }
+  }
+  else{
+    for (int i=0; i<=nbSide; i++){
+      shape0.vertex(x-sideSize,
+                    y+sideSize/4*sin(i*2*PI/nbSide),
+                    z+sideSize/4*cos(i*2*PI/nbSide));
+    }
   }
   shape0.endShape();
+ 
   return shape0;
 }
 
@@ -124,35 +134,34 @@ void createPylonBlock(float size, PShape pylon_block){
     pylon_block.vertex(size*0.9,size*0.9,size*0.9);
 }
 
-void draw_Pylon(float x, float y, float z){
+PShape Create_Pylon(float x, float y, float z){
+  PShape shape = createShape(GROUP);
   pushMatrix();
   translate(x,y,z);
   for(int i=0;i <nb_Pylons;i++){
-    shape(pylon_block[i]);
+    shape.addChild(pylon_block[i]);
   }
   popMatrix();
-  pushMatrix();
-  translate(coneSize+size*pow(0.9,nb_Pylons),0,size*nb_Pylons);
-  rotateY(-PI/2);
-  shape(cone);
-  popMatrix();
-  pushMatrix();
-  translate(-coneSize-size*pow(0.9,nb_Pylons),0,size*nb_Pylons);
-  rotateY(PI/2);
-  shape(cone);
-  popMatrix();
+  PShape c = myCone(coneSize, 200,coneSize+size*pow(0.9,nb_Pylons),0,size*nb_Pylons);
+ 
+  shape.addChild(c);
+  c = myCone(coneSize, 200,-coneSize+size*pow(0.9,nb_Pylons),0,size*nb_Pylons);
+ 
+  shape.addChild(c);
+  
+  return shape;
 }
 
-//void draw() {
-//  background(255);
-//  lights();
-//  translate(width/2, height/2);
-//  rotateX(PI/3);
-//  //rotateZ(frameCount * 0.01);
-//  //rotateY(frameCount * 0.01);
-//  //shape(cube);
-//  //rotateY(mouseY);
-//  draw_Pylon(0,0,0);
+void draw() {
+  background(255);
+  lights();
+  translate(width/2, height/2);
+  rotateX(PI/2);
+   //rotateZ(frameCount * 0.01);
+  //rotateY(frameCount * 0.01);
+  //shape(cube);
+  //rotateY(mouseY);
+  shape(pylone,100,100);
 //  //rotateX(PI/3.0);
 //  //translate(
-//}
+}
