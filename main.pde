@@ -1,130 +1,170 @@
-//PShape monde;
-//PShader myShader;
+PShape monde;
+PShader myShader;
 
-//float camX = width/2.0, camY = height/2.0, camZ = 0;
-//float posX = 0, posY = 0, posZ = -100;
-//float ex, ey, ez, vitesse = 2;
+float camX = width/2.0, camY = height/2.0, camZ = 0;
+float posX = 0, posY = 0, posZ = -100;
+float ex, ey, ez, vitesse = 2;
 
-//float alpha = -PI;
-//float beta = 0;
+float alpha = -PI;
+float beta = 0;
 
-//float zoom = 0;
+float zoom = 0;
 
-//float angleX, angleY;
-//float distance = 100;
+float angleX, angleY;
+float distance = 100;
 
-//boolean move_forward_W = false, move_forward = false, move_left = false , move_right = false , move_backward = false , move_up = false , move_down = false;
-
-//void setup(){
-//  size(1200, 1200 , P3D);
-//  cone = myCone(coneSize,200);
-//  createPylonBlocss(size);
-//  frameRate(40);
-//  monde = loadShape("HYPERSIMPLE/hypersimple.obj");
-//  myShader = loadShader("myFragmentShader.glsl",
-//    "myVertexShader.glsl");
-
-//  angleX = 0;
-//  angleY = 0;
-//}
-
-//void draw() {
-//  shader(myShader);
-
-//  background(128, 128, 128);
-//  shape(monde, 0, 0);
-
-//  ex = sin(alpha)*cos(beta);
-//  ey =  sin(alpha)*sin(beta);
-//  ez = cos(alpha);
-
-//  camX = distance *ex ;
-//  camY = distance* ey;
-//  camZ = distance * ez;
+boolean move_forward_W = false, move_forward = false, move_left = false , move_right = false , move_backward = false , move_up = false , move_down = false;
 
 
 
-//  camera(posX, posY, posZ, posX + camX, posY + camY, posZ + camZ, 0, 0, -1);
 
-//  perspective(PI/2 + zoom, width/height, 0.01, 500);
+float get_z(float x , float y){
+  float result = 0;
+  float cx = 0.0;
+  float cy =0.0;
+  for(int i=0 ; i < monde.getChildCount();i++){
+    PVector center = new PVector(0.0,0.0,0.0);
+    int nb = monde.getChild(i).getVertexCount();
+    for(int j=0 ; j < nb;j++){
+      
+      center = center.add(monde.getChild(i).getVertex(j));
+    }
 
-//  if (move_forward) {
-//    posY += ey*vitesse;
-//    posX += ex*vitesse;
-//  }
-//  if (move_forward_W){
-//    posY += ey*vitesse;
-//    posX += ex*vitesse;
-//    posZ += ez*vitesse;
-//  }
-//  if(move_backward){
-//    posY -= ey*vitesse;
-//    posX -= ex*vitesse;
-//  }
-//  if (move_left) {
-//    posX += ey*vitesse;
-//    posY += -ex*vitesse;
-//  }
-//  if (move_right) {
-//    posX -= ey*vitesse;
-//    posY -= -ex*vitesse;
-//  }
-//  if (move_up) {
-//    posZ +=vitesse;
-//  }
-//  if (move_down) {
-//    posZ -=vitesse;
-//  }
-//}
-//void mouseDragged() {
-//  float db = (float)(mouseX - pmouseX) / width * TWO_PI;
-//  float dalpha = (float)(-mouseY + pmouseY) / height * PI;
-//  if (abs(alpha+dalpha) <PI-0.02 && alpha+dalpha <0) {
-//    alpha += dalpha;
-//  }
-//  beta += db;
-//}
+    
+    if(sqrt((center.x/3-x)*(center.x/3-x) + (center.y/3-y)*(center.y/3-y)) < sqrt((cx-x)*(cx-x) +(cy-y)*(cy-y))){
+        cx = center.x/3;
+        cy = center.y/3;
+        result = center.z/3;
+    }
+  }
+  return result;
+}
 
-//void keyPressed(){
-//  if(keyCode == UP) move_forward = true;
-//  if (keyCode ==  87) move_forward_W = true; 
-//  if(keyCode == DOWN || keyCode == 83) move_backward = true;
-//  if(keyCode == LEFT|| keyCode == 81)move_left = true;
-//  if(keyCode == RIGHT || keyCode == 68) move_right = true;
-//  if(keyCode == 17) move_down = true;//ctrl
-//  if(keyCode == 16) move_up =true;//shift
+
+void setup(){
+  size(1200, 1200 , P3D);
+  createPylonBlocss(size);
+  pylone = Create_Pylon();
+  frameRate(40);
+  monde = loadShape("HYPERSIMPLE/hypersimple.obj");
+  myShader = loadShader("myFragmentShader.glsl",
+    "myVertexShader.glsl");
+
+  angleX = 0;
+  angleY = 0;
+}
+
+void draw() {
+  shader(myShader);
+
+  background(128, 128, 128);
+  shape(monde, 0, 0);
+ 
+
+  ex = sin(alpha)*cos(beta);
+  ey =  sin(alpha)*sin(beta);
+  ez = cos(alpha);
+
+  camX = distance *ex ;
+  camY = distance* ey;
+  camZ = distance * ez;
+
+
+
+  camera(posX, posY, posZ, posX + camX, posY + camY, posZ + camZ, 0, 0, -1);
+
+  perspective(PI/2 + zoom, width/height, 0.01, 500);
+
+  if (move_forward) {
+    posY += ey*vitesse;
+    posX += ex*vitesse;
+  }
+  if (move_forward_W){
+    posY += ey*vitesse;
+    posX += ex*vitesse;
+    posZ += ez*vitesse;
+  }
+  if(move_backward){
+    posY -= ey*vitesse;
+    posX -= ex*vitesse;
+  }
+  if (move_left) {
+    posX += ey*vitesse;
+    posY += -ex*vitesse;
+  }
+  if (move_right) {
+    posX -= ey*vitesse;
+    posY -= -ex*vitesse;
+  }
+  if (move_up) {
+    posZ +=vitesse;
+  }
+  if (move_down) {
+    posZ -=vitesse;
+  }
   
-//  //zooming  ()
-//  if(keyCode ==75){//K
-//    if(zoom < PI/2){
-//      zoom += PI/20;
-//    }
-//  }
-//  if(keyCode == 76){//L
-//    if(zoom > PI/20){
-//      zoom -= PI/20;
-//    }
-//  }
-
-
-//  if (keyCode == ' ') {
-//    camX = width/2.0;
-//    camY = height/2.0;
-//    camZ = 0;
-
-//    posX = 0;
-//    posY = 0;
-//    posZ = -100;
-//  }
-//}
-
-//void keyReleased(){
-//  if(keyCode == UP) move_forward = false;
-//  if (keyCode == 87) move_forward_W = false;
-//  if(keyCode == DOWN || keyCode == 83) move_backward = false;
-//  if(keyCode == LEFT || keyCode == 81) move_left = false;
-//  if(keyCode == RIGHT || keyCode == 68) move_right = false;
-//  if(keyCode == 17)move_down = false;
-//  if(keyCode == 16)move_up = false;
+  //Ajout de pylon 
+  int x1 = 0,y1 = 0 , x2 = 100, y2=100;
+  pushMatrix();
+  translate(0,0,get_z(x1,y1));
+  shape(pylone,x1,y1);
+  popMatrix();
+   pushMatrix();
+  translate(0,0,get_z(x2,y2));
+  shape(pylone,x2,y2);
+  popMatrix();
   
-//}
+  
+}
+void mouseDragged() {
+  float db = (float)(mouseX - pmouseX) / width * TWO_PI;
+  float dalpha = (float)(-mouseY + pmouseY) / height * PI;
+  if (abs(alpha+dalpha) <PI-0.02 && alpha+dalpha <0) {
+    alpha += dalpha;
+  }
+  beta += db;
+}
+
+void keyPressed(){
+  if(keyCode == UP) move_forward = true;
+  if (keyCode ==  87) move_forward_W = true; 
+  if(keyCode == DOWN || keyCode == 83) move_backward = true;
+  if(keyCode == LEFT|| keyCode == 81)move_left = true;
+  if(keyCode == RIGHT || keyCode == 68) move_right = true;
+  if(keyCode == 17) move_down = true;//ctrl
+  if(keyCode == 16) move_up =true;//shift
+  
+  //zooming  ()
+  if(keyCode ==75){//K
+    if(zoom < PI/2){
+      zoom += PI/20;
+    }
+  }
+  if(keyCode == 76){//L
+    if(zoom > PI/20){
+      zoom -= PI/20;
+    }
+  }
+
+
+  if (keyCode == ' ') {
+    camX = width/2.0;
+    camY = height/2.0;
+    camZ = 0;
+
+    posX = 0;
+    posY = 0;
+    posZ = -100;
+  }
+}
+
+void keyReleased(){
+  if(keyCode == UP) move_forward = false;
+  if (keyCode == 87) move_forward_W = false;
+  if(keyCode == DOWN || keyCode == 83) move_backward = false;
+  if(keyCode == LEFT || keyCode == 81) move_left = false;
+  if(keyCode == RIGHT || keyCode == 68) move_right = false;
+  if(keyCode == 17)move_down = false;
+  if(keyCode == 16)move_up = false;
+  
+}
