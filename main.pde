@@ -13,10 +13,12 @@ float zoom = 0;
 float angleX, angleY;
 float distance = 100;
 
-boolean move_forward = false, move_left = false, move_right = false, move_backward = false, move_up = false, move_down = false;
+boolean move_forward_W = false, move_forward = false, move_left = false , move_right = false , move_backward = false , move_up = false , move_down = false;
 
-void setup() {
-  size(1200, 1200, P3D);
+void setup(){
+  size(1200, 1200 , P3D);
+  cone = myCone(coneSize,200);
+  createPylonBlocss(size);
   frameRate(40);
   monde = loadShape("HYPERSIMPLE/hypersimple.obj");
   myShader = loadShader("myFragmentShader.glsl",
@@ -50,7 +52,12 @@ void draw() {
     posY += ey*vitesse;
     posX += ex*vitesse;
   }
-  if (move_backward) {
+  if (move_forward_W){
+    posY += ey*vitesse;
+    posX += ex*vitesse;
+    posZ += ez*vitesse;
+  }
+  if(move_backward){
     posY -= ey*vitesse;
     posX -= ex*vitesse;
   }
@@ -78,22 +85,23 @@ void mouseDragged() {
   beta += db;
 }
 
-void keyPressed() {
-  if (keyCode == UP || keyCode ==  87) move_forward = true;
-  if (keyCode == DOWN || keyCode == 83) move_backward = true;
-  if (keyCode == LEFT|| keyCode == 81)move_left = true;
-  if (keyCode == RIGHT || keyCode == 68) move_right = true;
-  if (keyCode == 17) move_down = true;//ctrl
-  if (keyCode == 16) move_up =true;//shift
-
-  //zooming
-  if (keyCode ==75) {//K
-    if (zoom < PI/5) {
+void keyPressed(){
+  if(keyCode == UP) move_forward = true;
+  if (keyCode ==  87) move_forward_W = true; 
+  if(keyCode == DOWN || keyCode == 83) move_backward = true;
+  if(keyCode == LEFT|| keyCode == 81)move_left = true;
+  if(keyCode == RIGHT || keyCode == 68) move_right = true;
+  if(keyCode == 17) move_down = true;//ctrl
+  if(keyCode == 16) move_up =true;//shift
+  
+  //zooming  ()
+  if(keyCode ==75){//K
+    if(zoom < PI/2){
       zoom += PI/20;
     }
   }
-  if (keyCode == 76) {//L
-    if (zoom > - 2*PI/5) {
+  if(keyCode == 76){//L
+    if(zoom > PI/20){
       zoom -= PI/20;
     }
   }
@@ -110,11 +118,13 @@ void keyPressed() {
   }
 }
 
-void keyReleased() {
-  if (keyCode == UP || keyCode == 87) move_forward = false;
-  if (keyCode == DOWN || keyCode == 83) move_backward = false;
-  if (keyCode == LEFT || keyCode == 81) move_left = false;
-  if (keyCode == RIGHT || keyCode == 68) move_right = false;
-  if (keyCode == 17)move_down = false;
-  if (keyCode == 16)move_up = false;
+void keyReleased(){
+  if(keyCode == UP) move_forward = false;
+  if (keyCode == 87) move_forward_W = false;
+  if(keyCode == DOWN || keyCode == 83) move_backward = false;
+  if(keyCode == LEFT || keyCode == 81) move_left = false;
+  if(keyCode == RIGHT || keyCode == 68) move_right = false;
+  if(keyCode == 17)move_down = false;
+  if(keyCode == 16)move_up = false;
+  
 }
