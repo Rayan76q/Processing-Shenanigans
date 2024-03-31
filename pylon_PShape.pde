@@ -39,16 +39,16 @@ void createPylonBlocss(float size) {
   pylon_block[0] = createShape();
   pylon_block[0].beginShape(LINES);
   pylon_block[0].stroke(0, 0, 0); // Set color to black
-  pylon_block[0].strokeWeight(0.5);
+  pylon_block[0].strokeWeight(6);
   createPylonBlock(size, pylon_block[0]);
   pylon_block[0].endShape();
-  int translation_rate = 0;
+  float translation_rate = 0;
   for (int i = 1; i<nb_Pylons; i++) {
     translation_rate+= 2*size*pow(0.9, i);
     pylon_block[i] = createShape();
     pylon_block[i].beginShape(LINES);
     pylon_block[i].stroke(0, 0, 0); // Set color to black
-    pylon_block[i].strokeWeight(0.5);
+    pylon_block[i].strokeWeight(6);
     pylon_block[i].translate(0, 0, translation_rate);
     createPylonBlock(size*pow(0.9, i), pylon_block[i]);
     pylon_block[i].endShape();
@@ -139,10 +139,10 @@ PShape Create_Pylon() {
     shape.addChild(pylon_block[i]);
   }
  
-  PShape c = myCone(coneSize, 200, coneSize+size*pow(0.9, nb_Pylons), 0, size*nb_Pylons, false);
+  PShape c = myCone(coneSize, 4, coneSize+size*pow(0.9, nb_Pylons), 0, size*nb_Pylons, false);
 
   shape.addChild(c);
-  c = myCone(coneSize, 200, -coneSize-size*pow(0.9, nb_Pylons), 0, size*nb_Pylons, true);
+  c = myCone(coneSize, 4, -coneSize-size*pow(0.9, nb_Pylons), 0, size*nb_Pylons, true);
 
   shape.addChild(c);
 

@@ -20,8 +20,8 @@ boolean move_forward_W = false, move_forward = false, move_left = false , move_r
 
 float get_z(float x , float y){
   float result = 0;
-  float cx = 0.0;
-  float cy =0.0;
+  float cx = -250.0;
+  float cy = -250.0;
   for(int i=0 ; i < monde.getChildCount();i++){
     PVector center = new PVector(0.0,0.0,0.0);
     int nb = monde.getChild(i).getVertexCount();
@@ -45,6 +45,7 @@ void setup(){
   size(1200, 1200 , P3D);
   createPylonBlocss(size);
   pylone = Create_Pylon();
+  pylone.scale(0.3);
   frameRate(40);
   monde = loadShape("HYPERSIMPLE/hypersimple.obj");
   myShader = loadShader("myFragmentShader.glsl",
@@ -104,15 +105,12 @@ void draw() {
   }
   
   //Ajout de pylon 
-  int x1 = 0,y1 = 0 , x2 = 100, y2=100;
-  pushMatrix();
-  translate(0,0,get_z(x1,y1));
-  shape(pylone,x1,y1);
-  popMatrix();
-   pushMatrix();
-  translate(0,0,get_z(x2,y2));
-  shape(pylone,x2,y2);
-  popMatrix();
+  for(int i=-100 ; i<=125 ; i+=25){
+    pushMatrix();
+    translate(0,0,get_z(i,i));
+    shape(pylone,i,i);
+    popMatrix();
+  }
   
   
 }
