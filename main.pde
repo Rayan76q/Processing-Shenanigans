@@ -54,9 +54,9 @@ void setup(){
   angleX = 0;
   angleY = 0;
   
-  float[] p1 = {20,100};
-  float[] p2 = {40,-115};
-  Ligne = create_ligne(p1,p2,25);
+  float[] p1 = {-100,-100};
+  float[] p2 = {100,100};
+  Ligne = create_ligne(p1,p2,50);
 }
 
 void draw() {
