@@ -53,13 +53,17 @@ void setup(){
 
   angleX = 0;
   angleY = 0;
+  
+  float[] p1 = {20,100};
+  float[] p2 = {40,-115};
+  Ligne = create_ligne(p1,p2,25);
 }
 
 void draw() {
   shader(myShader);
 
   background(128, 128, 128);
-  shape(monde, 0, 0);
+  //shape(monde, 0, 0);
  
 
   ex = sin(alpha)*cos(beta);
@@ -111,6 +115,8 @@ void draw() {
     shape(pylone,i,i);
     popMatrix();
   }
+  
+  shape(Ligne,0,0);
   
   
 }
