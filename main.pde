@@ -3,7 +3,7 @@ PShader myShader;
 
 float camX = width/2.0, camY = height/2.0, camZ = 0;
 float posX = 0, posY = 0, posZ = -100;
-float ex, ey, ez, vitesse = 2;
+float ex, ey, ez, vitesse = 0.5;
 
 float alpha = -PI;
 float beta = 0;
@@ -54,9 +54,9 @@ void setup(){
   angleX = 0;
   angleY = 0;
   
-  float[] p1 = {-100,-100};
-  float[] p2 = {100,100};
-  Ligne = create_ligne(p1,p2,50);
+  //float[] p1 = {-100,-100};
+  //float[] p2 = {100,100};
+  //Ligne = create_ligne(p1,p2,50);
 }
 
 void draw() {
@@ -116,7 +116,7 @@ void draw() {
     popMatrix();
   }
   
-  shape(Ligne,0,0);
+  //shape(Ligne,0,0);
   
   
 }

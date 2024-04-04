@@ -9,23 +9,34 @@ float coneSize = 5*size*pow(0.9, nb_Pylons);
 //  pylone = Create_Pylon();
 //}
 
-PShape myCone(float sideSize, int nbSide, float x, float y, float z, boolean left) {
+PShape myCone(float sideSize, int nbSide, float x, float y, float z,float w, int dir) {
+  //dir :
+  // dir = 1 <=> left
+  // dir = 0 <=> right
+  // dir = 2 <=> up
   PShape shape0 = createShape();
   shape0.beginShape(TRIANGLE_FAN);
   shape0.fill(128);
   shape0.noStroke();
   shape0.vertex(x, y, z);
-  if (left) {
+  if (dir ==1) {
     for (int i=0; i<=nbSide; i++) {
       shape0.vertex(x+sideSize,
-        y+sideSize/4*sin(i*2*PI/nbSide),
-        z+sideSize/4*cos(i*2*PI/nbSide));
+        y+sideSize/w*sin(i*2*PI/nbSide),
+        z+sideSize/w*cos(i*2*PI/nbSide));
     }
-  } else {
+  } else if (dir == 0) {
     for (int i=0; i<=nbSide; i++) {
       shape0.vertex(x-sideSize,
-        y+sideSize/4*sin(i*2*PI/nbSide),
-        z+sideSize/4*cos(i*2*PI/nbSide));
+        y+sideSize/w*sin(i*2*PI/nbSide),
+        z+sideSize/w*cos(i*2*PI/nbSide));
+    }
+  }
+   else{
+     for (int i=0; i<=nbSide; i++) {
+       shape0.vertex(x+sideSize/w*cos(i*2*PI/nbSide),
+        y+sideSize/w*sin(i*2*PI/nbSide),
+        z-sideSize);
     }
   }
   shape0.endShape();
@@ -139,13 +150,22 @@ PShape Create_Pylon() {
     shape.addChild(pylon_block[i]);
   }
  
-  PShape c = myCone(coneSize, 4, coneSize+size*pow(0.9, nb_Pylons), 0, size*nb_Pylons, false);
+  PShape c = myCone(coneSize, 4, coneSize+size*pow(0.9, nb_Pylons), 0, size*nb_Pylons,4, 0);
+  PShape c2 = myCone(coneSize/5*3, 4, coneSize/5*3+size*pow(0.9, nb_Pylons), 0, size*(nb_Pylons+1),4, 0);
 
   shape.addChild(c);
-  c = myCone(coneSize, 4, -coneSize-size*pow(0.9, nb_Pylons), 0, size*nb_Pylons, true);
-
+  shape.addChild(c2);
+  c = myCone(coneSize, 4, -coneSize-size*pow(0.9, nb_Pylons), 0, size*nb_Pylons,4, 1);
+  c2 = myCone(coneSize/5*3, 4, -coneSize/5*3-size*pow(0.9, nb_Pylons), 0, size*(nb_Pylons+1),4, 1);
   shape.addChild(c);
-
+  shape.addChild(c2);
+  //pyramide/chapeau du pylon:
+  //les valeurs ne marchent pas pour nimporte quoi,
+  //mais vu que le size du pylon ne changera pas, on se permet de fixer
+  //manuellement la longueur et la largeur de la pyramide/chapeau du pylon
+  c2 = myCone(size*pow(0.9, nb_Pylons-5)*0.85, 4, 0, 0, size*(nb_Pylons+2)+size*pow(0.9,nb_Pylons+6),1, 2);
+  c2.rotateZ(PI/4.0);
+  shape.addChild(c2);
   return shape;
 }
 
