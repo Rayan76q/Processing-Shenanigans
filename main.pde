@@ -54,9 +54,9 @@ void setup(){
   angleX = 0;
   angleY = 0;
   
-  //float[] p1 = {-100,-100};
-  //float[] p2 = {100,100};
-  //Ligne = create_ligne(p1,p2,50);
+  float[] p1 = {-100,-100};
+  float[] p2 = {100,100};
+  Ligne = create_ligne(p1,p2,10);
 }
 
 void draw() {
@@ -109,14 +109,14 @@ void draw() {
   }
   
   //Ajout de pylon 
-  for(int i=-100 ; i<=125 ; i+=25){
+  for(int i=-100 ; i<=100 ; i+=20){
     pushMatrix();
     translate(0,0,get_z(i,i));
     shape(pylone,i,i);
     popMatrix();
   }
   
-  //shape(Ligne,0,0);
+  shape(Ligne,0,0);
   
   
 }
