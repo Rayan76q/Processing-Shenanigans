@@ -14,8 +14,7 @@ float angleX, angleY;
 float distance = 100;
 
 boolean move_forward_W = false, move_forward = false, move_left = false , move_right = false , move_backward = false , move_up = false , move_down = false;
-
-
+boolean move_backward_S = false;
 
 
 float get_z(float x , float y){
@@ -93,6 +92,10 @@ void draw() {
     posY -= ey*vitesse;
     posX -= ex*vitesse;
   }
+  if(move_backward_S){
+    posY -= ey*vitesse*sqrt(2);
+    posX -= ex*vitesse*sqrt(2);
+  }
   if (move_left) {
     posX += ey*vitesse;
     posY += -ex*vitesse;
@@ -132,7 +135,8 @@ void mouseDragged() {
 void keyPressed(){
   if(keyCode == UP) move_forward = true;
   if (keyCode ==  87) move_forward_W = true; 
-  if(keyCode == DOWN || keyCode == 83) move_backward = true;
+  if(keyCode == DOWN )move_backward = true;
+  if(keyCode == 83) move_backward_S = true;
   if(keyCode == LEFT|| keyCode == 81)move_left = true;
   if(keyCode == RIGHT || keyCode == 68) move_right = true;
   if(keyCode == 17) move_down = true;//ctrl
@@ -165,7 +169,8 @@ void keyPressed(){
 void keyReleased(){
   if(keyCode == UP) move_forward = false;
   if (keyCode == 87) move_forward_W = false;
-  if(keyCode == DOWN || keyCode == 83) move_backward = false;
+  if(keyCode == DOWN) move_backward = false;
+  if(keyCode == 83) move_backward_S = false;
   if(keyCode == LEFT || keyCode == 81) move_left = false;
   if(keyCode == RIGHT || keyCode == 68) move_right = false;
   if(keyCode == 17)move_down = false;
