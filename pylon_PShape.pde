@@ -166,6 +166,7 @@ PShape Create_Pylon() {
   c2 = myCone(size*pow(0.9, nb_Pylons-5)*0.85, 4, 0, 0, size*(nb_Pylons+2)+size*pow(0.9,nb_Pylons+6),1, 2);
   c2.rotateZ(PI/4.0);
   shape.addChild(c2);
+  shape.rotateZ(-PI/4);
   return shape;
 }
 

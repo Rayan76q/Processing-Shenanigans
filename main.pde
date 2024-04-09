@@ -84,17 +84,17 @@ void draw() {
     posX += ex*vitesse;
   }
   if (move_forward_W){
-    posY += ey*vitesse;
-    posX += ex*vitesse;
-    posZ += ez*vitesse;
+    posY += ey*vitesse*2;
+    posX += ex*vitesse*2;
+    posZ += ez*vitesse*2;
   }
   if(move_backward){
     posY -= ey*vitesse;
     posX -= ex*vitesse;
   }
   if(move_backward_S){
-    posY -= ey*vitesse*sqrt(2);
-    posX -= ex*vitesse*sqrt(2);
+    posY -= ey*vitesse*(3);
+    posX -= ex*vitesse*(3);
   }
   if (move_left) {
     posX += ey*vitesse;
@@ -137,7 +137,7 @@ void keyPressed(){
   if (keyCode ==  87) move_forward_W = true; 
   if(keyCode == DOWN )move_backward = true;
   if(keyCode == 83) move_backward_S = true;
-  if(keyCode == LEFT|| keyCode == 81)move_left = true;
+  if(keyCode == LEFT|| keyCode == 'A')move_left = true;
   if(keyCode == RIGHT || keyCode == 68) move_right = true;
   if(keyCode == 17) move_down = true;//ctrl
   if(keyCode == 16) move_up =true;//shift
@@ -171,7 +171,7 @@ void keyReleased(){
   if (keyCode == 87) move_forward_W = false;
   if(keyCode == DOWN) move_backward = false;
   if(keyCode == 83) move_backward_S = false;
-  if(keyCode == LEFT || keyCode == 81) move_left = false;
+  if(keyCode == LEFT || keyCode == 'A') move_left = false;
   if(keyCode == RIGHT || keyCode == 68) move_right = false;
   if(keyCode == 17)move_down = false;
   if(keyCode == 16)move_up = false;

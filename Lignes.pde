@@ -19,7 +19,7 @@ PShape create_ligne(float[] p1, float[] p2, int nb_pylone) {
 
   PShape ligne = createShape(GROUP);
 
-  int nb = 21; //nombre de points pour tracer un segment;
+  int nb = 50; //nombre de points pour tracer un segment;
   float vx  = (p2[0]-p1[0])/nb_pylone, vy = (p2[1]-p1[1])/nb_pylone; //vecteur d'un pylone à un autre
   float ex=vx/nb, ey=vy/nb;  //veteur d'un point à un autre
   float dist = sqrt(vx*vx + vy*vy);
@@ -33,15 +33,29 @@ PShape create_ligne(float[] p1, float[] p2, int nb_pylone) {
     float p1z = get_z(p1x, p1y);
     float p2z = get_z(p2x,p2y) ;
     float difZ = p2z  - p1z;
-    for(int j = 0 ; j < nb; j++){
-       PShape segment = createShape();
-          segment.beginShape(LINES);
-          segment.stroke(0, 0, 0);
-          segment.strokeWeight(2);
-          segment.vertex(p1x+ex*j, p1y+ey*j, p1z + difZ/nb*j );
-          segment.vertex(p1x+ex*(j+1), p1y+ey*(j+1),p1z + difZ/nb*(j+1));
-          segment.endShape();
-          ligne.addChild(segment);
+    if(difZ>=0){
+      for(int j = 0 ; j < nb; j++){
+         PShape segment = createShape();
+            segment.beginShape(LINES);
+            segment.stroke(0, 0, 0);
+            segment.strokeWeight(2);
+            segment.vertex(-coneSize/2+p1x+ex*j, p1y+ey*j, p2z+size*(2.7) - difZ*sin((nb - j)*PI/(2*nb) ));
+            segment.vertex(-coneSize/2+p1x+ex*(j+1), p1y+ey*(j+1),p2z+size*(2.7) - difZ*sin((nb -j-1)*PI/(2*nb)));
+            segment.endShape();
+            ligne.addChild(segment);
+      }
+    }
+    else{
+      for(int j = 0 ; j < nb; j++){
+         PShape segment = createShape();
+            segment.beginShape(LINES);
+            segment.stroke(0, 0, 0);
+            segment.strokeWeight(2);
+            segment.vertex(-coneSize/2+p1x+ex*j, p1y+ey*j, p1z +size*(2.7)+ difZ*sin(j*PI/(2*nb) ));
+            segment.vertex(-coneSize/2+p1x+ex*(j+1), p1y+ey*(j+1),p1z +size*(2.7)+ difZ*sin((j+1)*PI/(2*nb)));
+            segment.endShape();
+            ligne.addChild(segment);
+      }
     }
   }
  
