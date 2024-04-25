@@ -1,8 +1,11 @@
-PShape pylon_block[];
-int nb_Pylons=9;
-PShape pylone;
+
+static final int nb_Pylons=9;
+float angle_rotation = -PI/4;
 float size = 1;
 float coneSize = 5*size*pow(0.9, nb_Pylons);
+PShape pylone;
+PShape pylon_block[]= new PShape[nb_Pylons];;
+
 //void setup() {
 // size(400, 400, P3D);
 //  createPylonBlocss(size);
@@ -45,7 +48,6 @@ PShape myCone(float sideSize, int nbSide, float x, float y, float z,float w, int
 }
 
 void createPylonBlocss(float size) {
-  pylon_block = new PShape[nb_Pylons];
   // Define the pylon_block
   pylon_block[0] = createShape();
   pylon_block[0].beginShape(LINES);
@@ -144,7 +146,7 @@ void createPylonBlock(float size, PShape pylon_block) {
   pylon_block.vertex(size*0.9, size*0.9, size*0.9);
 }
 
-PShape Create_Pylon() {
+PShape Create_Pylon(float angle_mort) {
   PShape shape = createShape(GROUP);
   for (int i=0; i <nb_Pylons; i++) {
     shape.addChild(pylon_block[i]);
@@ -166,8 +168,21 @@ PShape Create_Pylon() {
   c2 = myCone(size*pow(0.9, nb_Pylons-5)*0.85, 4, 0, 0, size*(nb_Pylons+2)+size*pow(0.9,nb_Pylons+6),1, 2);
   c2.rotateZ(PI/4.0);
   shape.addChild(c2);
-  shape.rotateZ(-PI/4);
+  angle_rotation = angle_mort;
+  shape.rotateZ(angle_mort);
   return shape;
+}
+
+public class Pylone_coords{
+  float x;
+  float y;
+  float z;
+  
+  public Pylone_coords(float xx,float yy, float zz){
+    x = xx+0.6*cos(angle_rotation);
+    y = yy +0.6*sin(angle_rotation);
+    z = zz + size*(nb_Pylons-3.5)/2.0 -0.051;
+  }
 }
 
 //void draw() {
