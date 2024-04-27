@@ -1,6 +1,7 @@
+import java.util.LinkedList;
 PShape monde;
 PShader myShader;
-
+LinkedList<Pylone_coords> listPylone;
 float camX = width/2.0, camY = height/2.0, camZ = 0;
 float posX = 0, posY = 0, posZ = -100;
 float ex, ey, ez, vitesse = 0.5;
@@ -16,6 +17,8 @@ float distance = 100;
 boolean move_forward_W = false, move_forward = false, move_left = false , move_right = false , move_backward = false , move_up = false , move_down = false;
 boolean move_backward_S = false;
 
+PVector point_depart;
+PVector point_arrive;
 
 float get_z(float x , float y){
   float result = 0;
@@ -41,21 +44,36 @@ float get_z(float x , float y){
 
 
 void setup(){
+  listPylone = new LinkedList<>();
   size(1200, 1200 , P3D);
+  monde = loadShape("HYPERSIMPLE/hypersimple.obj");
+  //Ajout des positions des pylones 
+  point_depart = new PVector(50,-100,get_z(50,-100));
+  point_arrive = new PVector(50,100,get_z(50,100));
+  float angl = ((point_arrive.x-point_depart.x)!= 0?
+  (float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):PI/2);
+  print(angl);
+  angle_rotation = angl;
+  for(int i=-100 ; i<=100 ; i+=20){
+    float z = get_z(i,50);
+    listPylone.add(new Pylone_coords(i,50,z));
+  }
+  
+  print(point_arrive);
   createPylonBlocss(size);
-  pylone = Create_Pylon();
+  pylone = Create_Pylon(angl);
   pylone.scale(0.3);
   frameRate(40);
-  monde = loadShape("HYPERSIMPLE/hypersimple.obj");
   myShader = loadShader("myFragmentShader.glsl",
     "myVertexShader.glsl");
 
   angleX = 0;
   angleY = 0;
   
+  
   float[] p1 = {-100,-100};
   float[] p2 = {100,100};
-  Ligne = create_ligne(p1,p2,10);
+  Ligne = create_ligne(listPylone);
 }
 
 void draw() {
@@ -113,14 +131,15 @@ void draw() {
   
   //Ajout de pylon 
   for(int i=-100 ; i<=100 ; i+=20){
+    float z = get_z(i,50);
     pushMatrix();
-    translate(0,0,get_z(i,i));
-    shape(pylone,i,i);
+    //listPylone.add(new Pylone_coords(i,50,z));
+    translate(0,0,z);
+    shape(pylone,i,50);
     popMatrix();
   }
   
   shape(Ligne,0,0);
-  
   
 }
 void mouseDragged() {
