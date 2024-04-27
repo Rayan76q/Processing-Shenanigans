@@ -21,7 +21,7 @@ boolean move_forward_W = false, move_forward = false,
 LinkedList<PVector> listPylone;
 PVector point_depart;
 PVector point_arrive;
-float nb_Pylones = 25;
+float nb_Pylones = 10;
 
 float get_z(float x , float y){
   float result = 0;
@@ -55,6 +55,7 @@ void setup(){
   point_arrive = new PVector(100,50,get_z(100,50));
   float angle_rotation = ((point_arrive.x-point_depart.x)!= 0?
   PI/2-(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
+  
   for(float i=0 ; i<nb_Pylones*10; i+=10){
     float x = point_depart.x +i/(nb_Pylones*10)*(point_arrive.x-point_depart.x);
     float y = point_depart.y +i/(nb_Pylones*10)*(point_arrive.y-point_depart.y);
@@ -76,7 +77,7 @@ void draw() {
   shader(myShader);
 
   background(128, 128, 128);
-  shape(monde, 0, 0);
+  //shape(monde, 0, 0);
  
 
   ex = sin(alpha)*cos(beta);
