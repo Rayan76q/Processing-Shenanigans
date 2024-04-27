@@ -1,7 +1,7 @@
 import java.util.LinkedList;
 PShape monde;
 PShader myShader;
-LinkedList<Pylone_coords> listPylone;
+
 float camX = width/2.0, camY = height/2.0, camZ = 0;
 float posX = 0, posY = 0, posZ = -100;
 float ex, ey, ez, vitesse = 0.5;
@@ -11,14 +11,17 @@ float beta = 0;
 
 float zoom = 0;
 
-float angleX, angleY;
 float distance = 100;
 
-boolean move_forward_W = false, move_forward = false, move_left = false , move_right = false , move_backward = false , move_up = false , move_down = false;
-boolean move_backward_S = false;
+boolean move_forward_W = false, move_forward = false, 
+    move_backward = false ,move_backward_S = false,
+    move_left = false , move_right = false , 
+    move_up = false , move_down = false;
 
+LinkedList<PVector> listPylone;
 PVector point_depart;
 PVector point_arrive;
+float nb_Pylones = 25;
 
 float get_z(float x , float y){
   float result = 0;
@@ -48,39 +51,32 @@ void setup(){
   size(1200, 1200 , P3D);
   monde = loadShape("HYPERSIMPLE/hypersimple.obj");
   //Ajout des positions des pylones 
-  point_depart = new PVector(50,-100,get_z(50,-100));
-  point_arrive = new PVector(50,100,get_z(50,100));
-  float angl = ((point_arrive.x-point_depart.x)!= 0?
-  (float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):PI/2);
-  print(angl);
-  angle_rotation = angl;
-  for(int i=-100 ; i<=100 ; i+=20){
-    float z = get_z(i,50);
-    listPylone.add(new Pylone_coords(i,50,z));
+  point_depart = new PVector(-100,50,get_z(-100,50));
+  point_arrive = new PVector(100,50,get_z(100,50));
+  float angle_rotation = ((point_arrive.x-point_depart.x)!= 0?
+  PI/2-(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
+  for(float i=0 ; i<nb_Pylones*10; i+=10){
+    float x = point_depart.x +i/(nb_Pylones*10)*(point_arrive.x-point_depart.x);
+    float y = point_depart.y +i/(nb_Pylones*10)*(point_arrive.y-point_depart.y);
+    float z = get_z(x,y);
+    listPylone.add(new PVector(x,
+    y,z));
   }
-  
-  print(point_arrive);
   createPylonBlocss(size);
-  pylone = Create_Pylon(angl);
+  pylone = Create_Pylon(angle_rotation);
   pylone.scale(0.3);
   frameRate(40);
   myShader = loadShader("myFragmentShader.glsl",
     "myVertexShader.glsl");
 
-  angleX = 0;
-  angleY = 0;
-  
-  
-  float[] p1 = {-100,-100};
-  float[] p2 = {100,100};
-  Ligne = create_ligne(listPylone);
+  Ligne = create_ligne(listPylone,angle_rotation);
 }
 
 void draw() {
   shader(myShader);
 
   background(128, 128, 128);
-  //shape(monde, 0, 0);
+  shape(monde, 0, 0);
  
 
   ex = sin(alpha)*cos(beta);
@@ -130,12 +126,11 @@ void draw() {
   }
   
   //Ajout de pylon 
-  for(int i=-100 ; i<=100 ; i+=20){
-    float z = get_z(i,50);
+  for(PVector c : listPylone){
     pushMatrix();
     //listPylone.add(new Pylone_coords(i,50,z));
-    translate(0,0,z);
-    shape(pylone,i,50);
+    translate(0,0,c.z);
+    shape(pylone,c.x,c.y);
     popMatrix();
   }
   
@@ -197,5 +192,4 @@ void keyReleased(){
   if(keyCode == RIGHT || keyCode == 68) move_right = false;
   if(keyCode == 17)move_down = false;
   if(keyCode == 16)move_up = false;
-  
 }

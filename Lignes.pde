@@ -12,16 +12,16 @@ float f(float a, float b, float x) {
 }
 
 
-PShape create_ligne(LinkedList<Pylone_coords> coords){
-  float p1x = coords.get(0).x;
-  float p1y = coords.get(0).y;
-  float p1z = coords.get(0).z;
+PShape create_ligne(LinkedList<PVector> coords,float angle_rotation){
+  float p1x = coords.get(0).x+0.6*cos(angle_rotation);
+  float p1y = coords.get(0).y+0.6*sin(angle_rotation);
+  float p1z = coords.get(0).z+ size*(nb_Pylons-3.5)/2.0 -0.051;
   float p2x,p2y,p2z;
   PShape ligne = createShape(GROUP);
-  for(Pylone_coords c : coords){
-    p2x = c.x;
-    p2y = c.y;
-    p2z = c.z;
+  for(PVector c : coords){
+    p2x = c.x+0.6*cos(angle_rotation);
+    p2y = c.y+0.6*sin(angle_rotation);
+    p2z = c.z+ size*(nb_Pylons-3.5)/2.0 -0.051;
     PShape segment = createShape();
     segment.beginShape(LINES);
     segment.stroke(0);

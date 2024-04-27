@@ -1,6 +1,4 @@
-
 static final int nb_Pylons=9;
-float angle_rotation = -PI/4;
 float size = 1;
 float coneSize = 5*size*pow(0.9, nb_Pylons);
 PShape pylone;
@@ -168,22 +166,11 @@ PShape Create_Pylon(float angle_mort) {
   c2 = myCone(size*pow(0.9, nb_Pylons-5)*0.85, 4, 0, 0, size*(nb_Pylons+2)+size*pow(0.9,nb_Pylons+6),1, 2);
   c2.rotateZ(PI/4.0);
   shape.addChild(c2);
-  angle_rotation = angle_mort;
+  //angle_rotation = angle_mort;
   shape.rotateZ(angle_mort);
   return shape;
 }
 
-public class Pylone_coords{
-  float x;
-  float y;
-  float z;
-  
-  public Pylone_coords(float xx,float yy, float zz){
-    x = xx+0.6*cos(angle_rotation);
-    y = yy +0.6*sin(angle_rotation);
-    z = zz + size*(nb_Pylons-3.5)/2.0 -0.051;
-  }
-}
 
 //void draw() {
 //  background(255);
