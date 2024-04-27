@@ -1,13 +1,15 @@
 float HEOLIENNE = 10;
 int NBEOLIENNE = 10;
 
+float spRadius = HEOLIENNE /60 , spHeight = HEOLIENNE/40; 
+
 public class Eolienne{
   float x;
   float y;
   float z;
   
   PShape pales;
-  
+  PShape support;
   PShape tour;
   
   PShape forme;
@@ -32,12 +34,13 @@ public class Eolienne{
     pales = tmp;
     
     this.tour = cylinder(HEOLIENNE,0.1);
-    
     this.forme = createShape(GROUP);
     this.forme.addChild(pales);
     this.tour.translate(0,-0.1,-HEOLIENNE);
+    this.support = createSupport(spRadius,spHeight);
     this.forme.addChild(tour);
-
+    this.support.translate(0,-spHeight/2,0);
+    this.forme.addChild(support);
   }
   
   void drawEolienne(){
@@ -46,9 +49,6 @@ public class Eolienne{
     translate(x,y,z+HEOLIENNE);
     shape(forme);
     pales.rotateY(0.01);     
-    noStroke();
-    fill(255);
-    sphere(0.15);
     popMatrix();
     
 
@@ -61,7 +61,7 @@ PShape helice(float r,float x, float y, float z){
 
   ret.beginShape();
   ret.vertex(0,0,0);
-  ret.bezierVertex(r/2,r/16,r/4,r,r/20,0,2*r,0,0);
+  ret.bezierVertex(r/10, r/16, r/4, 4*r, r/20, 0, r, 0, 0);
   ret.endShape();
   ret.translate(x,y,z);
   return ret;
@@ -107,4 +107,53 @@ PShape cylinder(float h, float r) {
   stroke(0);
   
   return cylinder;
+}
+
+
+
+PShape createSupport(float cylinderRadius , float cylinderHeight){
+  PShape r = createShape(GROUP);
+  fill(0);
+  r.addChild(drawCylinder(cylinderRadius,cylinderHeight));
+  r.addChild(drawCircle(cylinderRadius,-cylinderHeight/2, 0));
+  PShape sph = createShape(SPHERE, cylinderRadius);
+  sph.translate(0,cylinderHeight/2,0);
+  r.addChild(sph);
+
+  return r;
+}
+
+
+PShape drawCylinder(float cylinderRadius , float cylinderHeight) {
+  int segments = 50; // Number of segments to approximate the cylinder
+  
+  PShape r = createShape();
+  r.beginShape(QUAD_STRIP);
+  for (int i = 0; i <= segments; i++) {
+    float angle = map(i, 0, segments, 0, TWO_PI);
+    float x = cos(angle) * cylinderRadius;
+    float z = sin(angle) * cylinderRadius;
+    
+    r.vertex(x, -cylinderHeight/2, z);
+    r.vertex(x, cylinderHeight/2, z);
+  }
+  r.endShape();
+
+  return r;
+}
+
+PShape drawCircle(float radius, float y, float z) {
+  int segments = 50;
+  PShape r = createShape();
+  r.beginShape(TRIANGLE_FAN);
+  noStroke();
+  r.vertex(0, y, z);
+  for (int i = 0; i <= segments; i++) {
+    float angle = map(i, 0, segments, 0, TWO_PI);
+    float x = cos(angle) * radius;
+    float z2 = sin(angle) * radius;
+    r.vertex(x, y, z2);
+  }
+  r.endShape();
+  return r;
 }

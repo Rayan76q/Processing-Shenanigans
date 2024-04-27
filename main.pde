@@ -141,7 +141,7 @@ void draw() {
   
   shape(Ligne,0,0);
   
-  Eolienne e = new Eolienne(0,0);
+  Eolienne e = new Eolienne(20,10);
   e.drawEolienne();
   
 }
