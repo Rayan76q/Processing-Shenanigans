@@ -41,29 +41,11 @@ public class Eolienne{
   }
   
   void drawEolienne(){
-    //fill(255);
-    //pushMatrix();
-    //translate(x,y,z+HEOLIENNE);
-    //shape(pales);
-    //pales.rotateY(0.01);
-    //PShape tour = cylinder(HEOLIENNE,0.2);
-    //pushMatrix();
-    //translate(x,y-0.4,-HEOLIENNE);
-    //sphere(0.4);
-    //pushMatrix();
-    //noStroke();
-    //translate(x,y,HEOLIENNE);
-    //sphere(0.4);
-    //popMatrix();
-    //shape(tour);
-    //popMatrix();
-    //popMatrix();   
+   
     pushMatrix();
     translate(x,y,z+HEOLIENNE);
     shape(forme);
     pales.rotateY(0.01);     
-    //
-    //translate(x,-HEOLIENNE/100,z);
     noStroke();
     fill(255);
     sphere(0.15);
@@ -126,25 +108,3 @@ PShape cylinder(float h, float r) {
   
   return cylinder;
 }
-
-
-//PShape tourEolienne(float h, float r){
-//  PShape ret = createShape();
-//  ret.beginShape(QUADS);
-//  ret.vertex(0,0,0);
-//  ret.vertex(0,0,h);
-//  ret.vertex(r,0,h);
-//  ret.vertex(r,0,0);
-  
-//  ret.vertex();
-//  ret.vertex();
-//  ret.vertex();
-//  ret.vertex();
-  
-//  //ret.vertex();
-//  //ret.vertex();
-//  //ret.vertex();
-//  //ret.vertex();
-//  ret.endShape(CLOSE);
-//  return ret;
-//}

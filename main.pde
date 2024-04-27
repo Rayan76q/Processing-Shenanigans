@@ -141,6 +141,9 @@ void draw() {
   
   shape(Ligne,0,0);
   
+  Eolienne e = new Eolienne(0,0);
+  e.drawEolienne();
+  
 }
 void mouseDragged() {
   float db = (float)(mouseX - pmouseX) / width * TWO_PI;
