@@ -16,7 +16,6 @@ public class Eolienne{
     PShape p1 = helice(sizeEol/5,0,0,0);
     PShape p2 = helice(sizeEol/5,0,0,0);
     PShape p3 = helice(sizeEol/5,0,0,0);
-    
     p2.rotateY(2*PI/3);
     p3.rotateY(-2*PI/3);
     
@@ -49,10 +48,11 @@ public class Eolienne{
 
 PShape helice(float r,float x, float y, float z){
   PShape result = createShape();
-  noStroke();
   result.beginShape();
+  fill(255);
+  stroke(255);
   result.vertex(0,0,0);
-  result.bezierVertex(r/10, r/16, r/4, 4*r, r/20, 0, r, 0, 0);
+  result.bezierVertex(r/2,r/16,r/4,4*r,r/20,0,2*r,0,0);
   result.endShape();
   result.translate(x,y,z);
   return result;
@@ -60,7 +60,6 @@ PShape helice(float r,float x, float y, float z){
 
 PShape cylinder(float h, float r) {
   PShape result = createShape(GROUP);
-  noStroke();
   result.addChild( drawCylinder(r,h));
   result.addChild(drawCircle(r,0,0));
   result.addChild( drawCircle(r,h,0));
@@ -73,7 +72,6 @@ PShape cylinder(float h, float r) {
 
 PShape createSupport(float cylinderRadius , float cylinderHeight){
   PShape r = createShape(GROUP);
-  noStroke();
   r.addChild(drawCylinder(cylinderRadius,cylinderHeight));
   r.addChild(drawCircle(cylinderRadius,0, 0));
   PShape sph = createShape(SPHERE, cylinderRadius);
@@ -89,6 +87,8 @@ PShape drawCylinder(float cylinderRadius , float cylinderHeight) {
   
   PShape r = createShape();
   r.beginShape(QUAD_STRIP);
+  fill(255);
+  stroke(255);
   for (int i = 0; i <= segments; i++) {
     float angle = map(i, 0, segments, 0, TWO_PI);
     float x = cos(angle) * cylinderRadius;
@@ -105,9 +105,9 @@ PShape drawCylinder(float cylinderRadius , float cylinderHeight) {
 PShape drawCircle(float radius, float y, float z) {
   int segments = 50;
   PShape r = createShape();
-  noStroke();
-  fill(255);
   r.beginShape(TRIANGLE_FAN);
+  fill(255);
+  stroke(255);
   r.vertex(0, y, z);
   for (int i = 0; i <= segments; i++) {
     float angle = map(i, 0, segments, 0, TWO_PI);

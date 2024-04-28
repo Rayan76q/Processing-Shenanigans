@@ -79,7 +79,7 @@ void draw() {
 
   background(128, 128, 128);
   //shape(monde, 0, 0);
- 
+   resetShader();
 
   ex = sin(alpha)*cos(beta);
   ey =  sin(alpha)*sin(beta);
@@ -145,6 +145,8 @@ void draw() {
   //shape(Ligne,0,0);
   popMatrix();
   
+  
+  fill(255);
   Eolienne e = new Eolienne(20,10);
   e.drawEolienne();
   
