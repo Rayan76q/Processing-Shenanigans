@@ -11,7 +11,7 @@ public class Eolienne{
   public Eolienne(float x, float y){
     this.x = x;
     this.y = y;
-    this.z = get_z(0, 0);
+    this.z = get_z(x, y);
     
     PShape p1 = helice(sizeEol/8,0,0,0);
     PShape p2 = helice(sizeEol/8,0,0,0);
@@ -39,7 +39,8 @@ public class Eolienne{
     pushMatrix();
     pales.rotateY(frameCount/TWO_PI);
     fill(255);
-    translate(x,y,z+sizeEol);
+    forme.scale(0.4);
+    translate(x,y,z+sizeEol*0.4);
     shape(forme);   
     popMatrix();
 
