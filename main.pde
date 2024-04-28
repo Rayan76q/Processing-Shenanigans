@@ -13,56 +13,58 @@ float zoom = 0;
 
 float distance = 100;
 
-boolean move_forward_W = false, move_forward = false, 
-    move_backward = false ,move_backward_S = false,
-    move_left = false , move_right = false , 
-    move_up = false , move_down = false;
+boolean move_forward_W = false, move_forward = false,
+  move_backward = false, move_backward_S = false,
+  move_left = false, move_right = false,
+  move_up = false, move_down = false, show_ligne = true, show_pylone = true, show_eol = true;
 
 LinkedList<PVector> listPylone;
 PVector point_depart;
 PVector point_arrive;
 float angle_rotation;
-float nb_Pylones = 15;
+float nb_Pylones = 25;
 
-float get_z(float x , float y){
+float get_z(float x, float y) {
   float result = 0;
   float cx = -250.0;
   float cy = -250.0;
-  for(int i=0 ; i < monde.getChildCount();i++){
-    PVector center = new PVector(0.0,0.0,0.0);
+  for (int i=0; i < monde.getChildCount(); i++) {
+    PVector center = new PVector(0.0, 0.0, 0.0);
     int nb = monde.getChild(i).getVertexCount();
-    for(int j=0 ; j < nb;j++){
-      
+    for (int j=0; j < nb; j++) {
+
       center = center.add(monde.getChild(i).getVertex(j));
     }
 
-    
-    if(sqrt((center.x/3-x)*(center.x/3-x) + (center.y/3-y)*(center.y/3-y)) < sqrt((cx-x)*(cx-x) +(cy-y)*(cy-y))){
-        cx = center.x/3;
-        cy = center.y/3;
-        result = center.z/3;
+
+    if (sqrt((center.x/3-x)*(center.x/3-x) + (center.y/3-y)*(center.y/3-y)) < sqrt((cx-x)*(cx-x) +(cy-y)*(cy-y))) {
+      cx = center.x/3;
+      cy = center.y/3;
+      result = center.z/3;
     }
   }
   return result;
 }
 
 
-void setup(){
+void setup() {
   listPylone = new LinkedList<>();
-  size(1200, 1200 , P3D);
+  size(1200, 1200, P3D);
   monde = loadShape("HYPERSIMPLE/hypersimple.obj");
-  //Ajout des positions des pylones 
-  point_depart = new PVector(-100,50,get_z(-100,50));
-  point_arrive = new PVector(50,50,get_z(50,50));
+
+  float x1=20, y1=100, x2=40, y2=-115;
+  //Ajout des positions des pylones
+  point_depart = new PVector(x1, y1, get_z(x1, y1));
+  point_arrive = new PVector(x2, y2, get_z(x2, y2));
   angle_rotation = ((point_arrive.x-point_depart.x)!= 0?
-  PI/2-(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
-  
-  for(float i=0 ; i<nb_Pylones*10; i+=10){
+    PI/2-(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
+
+  for (float i=0; i<nb_Pylones*10; i+=10) {
     float x = point_depart.x +i/(nb_Pylones*10)*(point_arrive.x-point_depart.x);
     float y = point_depart.y +i/(nb_Pylones*10)*(point_arrive.y-point_depart.y);
-    float z = get_z(x,y);
+    float z = get_z(x, y);
     listPylone.add(new PVector(x,
-    y,z));
+      y, z));
   }
   createPylonBlocss(size);
   pylone = Create_Pylon(angle_rotation);
@@ -71,14 +73,14 @@ void setup(){
   myShader = loadShader("myFragmentShader.glsl",
     "myVertexShader.glsl");
 
-  Ligne = create_ligne(listPylone,angle_rotation);
+  Ligne = create_ligne(listPylone, angle_rotation);
 }
 
 void draw() {
   shader(myShader);
   background(128, 128, 128);
   shape(monde, 0, 0);
-   resetShader();
+  resetShader();
 
   ex = sin(alpha)*cos(beta);
   ey =  sin(alpha)*sin(beta);
@@ -98,16 +100,16 @@ void draw() {
     posY += ey*vitesse;
     posX += ex*vitesse;
   }
-  if (move_forward_W){
+  if (move_forward_W) {
     posY += ey*vitesse*2;
     posX += ex*vitesse*2;
     posZ += ez*vitesse*2;
   }
-  if(move_backward){
+  if (move_backward) {
     posY -= ey*vitesse;
     posX -= ex*vitesse;
   }
-  if(move_backward_S){
+  if (move_backward_S) {
     posY -= ey*vitesse*(3);
     posX -= ex*vitesse*(3);
   }
@@ -125,30 +127,41 @@ void draw() {
   if (move_down) {
     posZ -=vitesse;
   }
-  
-  //Ajout de pylon 
-  for(PVector c : listPylone){
-    pushMatrix();
-    //listPylone.add(new Pylone_coords(i,50,z));
-    translate(0,0,c.z);
-    shape(pylone,c.x,c.y);
-    popMatrix();
+
+
+  if (show_pylone) {
+    //Ajout de pylon
+    for (PVector c : listPylone) {
+      pushMatrix();
+      //listPylone.add(new Pylone_coords(i,50,z));
+      translate(0, 0, c.z);
+      shape(pylone, c.x, c.y);
+      popMatrix();
+    }
+    if (show_ligne) {
+      shape(Ligne, -2*0.6*cos(angle_rotation), -2*0.6*sin(angle_rotation));
+      shape(Ligne, 0, 0);
+      pushMatrix();
+      translate(0, 0, 0.31);
+      shape(Ligne, -2*0.5*cos(angle_rotation), -2*0.5*sin(angle_rotation));
+      shape(Ligne, -0.2*cos(angle_rotation), -0.2*sin(angle_rotation));
+      //shape(Ligne,0,0);
+      popMatrix();
+    }
   }
-  
-  shape(Ligne,-2*0.6*cos(angle_rotation),-2*0.6*sin(angle_rotation));
-  shape(Ligne,0,0);
-  pushMatrix();
-  translate(0,0,0.31);
-  shape(Ligne,-2*0.5*cos(angle_rotation),-2*0.5*sin(angle_rotation));
-  shape(Ligne,-0.2*cos(angle_rotation),-0.2*sin(angle_rotation));
-  //shape(Ligne,0,0);
-  popMatrix();
-  
-  
-  fill(255);
-  Eolienne e = new Eolienne(20,10);
-  e.drawEolienne();
-  
+
+
+  if (show_eol) {
+    fill(255);
+    LinkedList<Eolienne> e = new LinkedList<>();
+    e.add(new Eolienne(50, -100));
+    e.add(new Eolienne(60, -100));
+    e.add(new Eolienne(55, -105));
+    e.add(new Eolienne(50, -105));
+    for (Eolienne eol : e) {
+      eol.drawEolienne();
+    }
+  }
 }
 void mouseDragged() {
   float db = (float)(mouseX - pmouseX) / width * TWO_PI;
@@ -159,24 +172,27 @@ void mouseDragged() {
   beta += db;
 }
 
-void keyPressed(){
-  if(keyCode == UP) move_forward = true;
-  if (keyCode ==  87) move_forward_W = true; 
-  if(keyCode == DOWN )move_backward = true;
-  if(keyCode == 83) move_backward_S = true;
-  if(keyCode == LEFT|| keyCode == 'A')move_left = true;
-  if(keyCode == RIGHT || keyCode == 68) move_right = true;
-  if(keyCode == 17) move_down = true;//ctrl
-  if(keyCode == 16) move_up =true;//shift
-  
+void keyPressed() {
+  if (keyCode == UP) move_forward = true;
+  if (keyCode ==  87) move_forward_W = true;
+  if (keyCode == DOWN )move_backward = true;
+  if (keyCode == 83) move_backward_S = true;
+  if (keyCode == LEFT|| keyCode == 'A')move_left = true;
+  if (keyCode == RIGHT || keyCode == 68) move_right = true;
+  if (keyCode == 17) move_down = true;//ctrl
+  if (keyCode == 16) move_up = true;//shift
+  if (keyCode == 84) show_pylone = !show_pylone;
+  if (keyCode == 89) show_ligne = !show_ligne;
+  if (keyCode == 85) show_eol = !show_eol;
+
   //zooming  ()
-  if(keyCode ==75){//K
-    if(zoom < PI/2){
+  if (keyCode ==75) {//K
+    if (zoom < PI/2) {
       zoom += PI/20;
     }
   }
-  if(keyCode == 76){//L
-    if(zoom > PI/20){
+  if (keyCode == 76) {//L
+    if (zoom > PI/20) {
       zoom -= PI/20;
     }
   }
@@ -193,13 +209,13 @@ void keyPressed(){
   }
 }
 
-void keyReleased(){
-  if(keyCode == UP) move_forward = false;
+void keyReleased() {
+  if (keyCode == UP) move_forward = false;
   if (keyCode == 87) move_forward_W = false;
-  if(keyCode == DOWN) move_backward = false;
-  if(keyCode == 83) move_backward_S = false;
-  if(keyCode == LEFT || keyCode == 'A') move_left = false;
-  if(keyCode == RIGHT || keyCode == 68) move_right = false;
-  if(keyCode == 17)move_down = false;
-  if(keyCode == 16)move_up = false;
+  if (keyCode == DOWN) move_backward = false;
+  if (keyCode == 83) move_backward_S = false;
+  if (keyCode == LEFT || keyCode == 'A') move_left = false;
+  if (keyCode == RIGHT || keyCode == 68) move_right = false;
+  if (keyCode == 17)move_down = false;
+  if (keyCode == 16)move_up = false;
 }
