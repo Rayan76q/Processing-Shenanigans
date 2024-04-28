@@ -13,7 +13,7 @@ float f(float a, float b, float x) {
 
 
 PShape create_ligne(LinkedList<PVector> coords,float angle_rotation){
-  float nb_precision = 50;
+  //float nb_precision = 50;
   float p1x = coords.get(0).x+0.6*cos(angle_rotation);
   float p1y = coords.get(0).y+0.6*sin(angle_rotation);
   float p1z = coords.get(0).z+ size*(nb_Pylons-3.5)/2.0 -0.051;
@@ -23,27 +23,19 @@ PShape create_ligne(LinkedList<PVector> coords,float angle_rotation){
     p2x = c.x+0.6*cos(angle_rotation);
     p2y = c.y+0.6*sin(angle_rotation);
     p2z = c.z+ size*(nb_Pylons-3.5)/2.0 -0.051;
-    float a = sqrt((p1x-p2x)*(p1x-p2x)+(p1y-p2y)*(p1y-p2y));
-    print(a, '\n');
-    float b = (p1z-p2z)/2;
-    if(a!=0){
+    //float a = sqrt((p1x-p2x)*(p1x-p2x)+(p1y-p2y)*(p1y-p2y));
+    //print(a, '\n');
+    //float b = (p1z-p2z)/2;
+    //if(a!=0){
       PShape segment = createShape();
       segment.beginShape(LINES);
       segment.stroke(0);
       segment.strokeWeight(2);
-      for(float i = 0; i<nb_precision;i++){
-        float stepx = p1x +i/nb_precision*(p2x-p1x);
-        float stepy = p1y+i/nb_precision*(p2y-p1y);
-        float stepz = f(a,b,sqrt(stepx*stepx +stepy*stepy));
-        float stepx1 = p1x +(i+1)/nb_precision*(p2x-p1x);
-        float stepy1 = p1y+(i+1)/nb_precision*(p2y-p1y);
-        float stepz1 = f(a,b,sqrt(stepx1*stepx1 +stepy1*stepy1));
-        segment.vertex(stepx,stepy,stepz);
-        segment.vertex(stepx1,stepy1,stepz1);
-      }
+      segment.vertex(p1x,p1y,p1z);
+      segment.vertex(p2x,p2y,p2z);
       segment.endShape();
       ligne.addChild(segment);
-    }
+    //}
     p1x = p2x;
     p1y = p2y;
     p1z = p2z;
