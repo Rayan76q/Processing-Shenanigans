@@ -13,9 +13,9 @@ public class Eolienne{
     this.y = y;
     this.z = get_z(0, 0);
     
-    PShape p1 = helice(sizeEol/5,0,0,0);
-    PShape p2 = helice(sizeEol/5,0,0,0);
-    PShape p3 = helice(sizeEol/5,0,0,0);
+    PShape p1 = helice(sizeEol/8,0,0,0);
+    PShape p2 = helice(sizeEol/8,0,0,0);
+    PShape p3 = helice(sizeEol/8,0,0,0);
     p2.rotateY(2*PI/3);
     p3.rotateY(-2*PI/3);
     
@@ -37,13 +37,15 @@ public class Eolienne{
   
   void drawEolienne(){
     pushMatrix();
+    pales.rotateY(frameCount/TWO_PI);
     fill(255);
     translate(x,y,z+sizeEol);
-    shape(forme);
-    pales.rotateY(0.01);     
+    shape(forme);   
     popMatrix();
 
   }
+  
+  
 }
 
 PShape helice(float r,float x, float y, float z){

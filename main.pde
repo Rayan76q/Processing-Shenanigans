@@ -76,9 +76,8 @@ void setup(){
 
 void draw() {
   shader(myShader);
-
   background(128, 128, 128);
-  //shape(monde, 0, 0);
+  shape(monde, 0, 0);
    resetShader();
 
   ex = sin(alpha)*cos(beta);

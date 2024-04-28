@@ -17,7 +17,7 @@ PShape myCone(float sideSize, int nbSide, float x, float y, float z,float w, int
   // dir = 2 <=> up
   PShape shape0 = createShape();
   shape0.beginShape(TRIANGLE_FAN);
-  shape0.fill(128);
+  shape0.fill(0);
   shape0.noStroke();
   shape0.vertex(x, y, z);
   if (dir ==1) {
