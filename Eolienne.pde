@@ -1,42 +1,35 @@
-float HEOLIENNE = 10;
-int NBEOLIENNE = 10;
+float sizeEol = 10;
+int nbEol = 10;
 
-float spRadius = HEOLIENNE /60 , spHeight = HEOLIENNE/40; 
+float spRadius = sizeEol /60 , spHeight = sizeEol/40; 
 
 public class Eolienne{
-  float x;
-  float y;
-  float z;
+  float x,y,z;
   
-  PShape pales;
-  PShape support;
-  PShape tour;
-  
-  PShape forme;
+  PShape pales,support,tour,forme;
   
   public Eolienne(float x, float y){
     this.x = x;
     this.y = y;
     this.z = get_z(0, 0);
     
-    PShape h1 = helice(HEOLIENNE/5,0,0,0);
-    PShape h2 = helice(HEOLIENNE/5,0,0,0);
-    PShape h3 = helice(HEOLIENNE/5,0,0,0);
+    PShape p1 = helice(sizeEol/5,0,0,0);
+    PShape p2 = helice(sizeEol/5,0,0,0);
+    PShape p3 = helice(sizeEol/5,0,0,0);
     
-    h2.rotateY(2*PI/3);
-    h3.rotateY(-2*PI/3);
+    p2.rotateY(2*PI/3);
+    p3.rotateY(-2*PI/3);
     
-    PShape tmp = createShape(GROUP);
-    tmp.addChild(h1);
-    tmp.addChild(h2);
-    tmp.addChild(h3);
+    this.pales = createShape(GROUP);
+    this.pales.addChild(p1);
+    this.pales.addChild(p2);
+    this.pales.addChild(p3);
     
-    pales = tmp;
     
-    this.tour = cylinder(HEOLIENNE,0.1);
+    this.tour = cylinder(sizeEol,0.1);
     this.forme = createShape(GROUP);
     this.forme.addChild(pales);
-    this.tour.translate(0,-0.1,-HEOLIENNE);
+    this.tour.translate(0,-0.1,-sizeEol);
     this.support = createSupport(spRadius,spHeight);
     this.forme.addChild(tour);
     this.support.translate(0,-spHeight/2,0);
@@ -44,88 +37,55 @@ public class Eolienne{
   }
   
   void drawEolienne(){
-   
     pushMatrix();
-    translate(x,y,z+HEOLIENNE);
+    fill(255);
+    translate(x,y,z+sizeEol);
     shape(forme);
     pales.rotateY(0.01);     
     popMatrix();
-    
 
   }
 }
 
 PShape helice(float r,float x, float y, float z){
-  PShape ret = createShape();
+  PShape result = createShape();
   noStroke();
-
-  ret.beginShape();
-  ret.vertex(0,0,0);
-  ret.bezierVertex(r/10, r/16, r/4, 4*r, r/20, 0, r, 0, 0);
-  ret.endShape();
-  ret.translate(x,y,z);
-  return ret;
+  result.beginShape();
+  result.vertex(0,0,0);
+  result.bezierVertex(r/10, r/16, r/4, 4*r, r/20, 0, r, 0, 0);
+  result.endShape();
+  result.translate(x,y,z);
+  return result;
 }
 
 PShape cylinder(float h, float r) {
-  PShape cylinder = createShape(GROUP);
+  PShape result = createShape(GROUP);
   noStroke();
-  // Corps du cylindre
-  PShape body = createShape();
-  body.beginShape(QUAD_STRIP);
-  for (int i = 0; i <= 360; i += 20) {
-    float x = cos(radians(i)) * r;
-    float y = sin(radians(i)) * r;
-    body.vertex(x, y, 0);
-    body.vertex(x, y, h);
-  }
-  body.endShape();
-  cylinder.addChild(body);
+  result.addChild( drawCylinder(r,h));
+  result.addChild(drawCircle(r,0,0));
+  result.addChild( drawCircle(r,h,0));
+  result.rotateX(PI/2);
   
-  // Bases du cylindre
-  PShape topBase = createShape();
-  topBase.beginShape(TRIANGLE_FAN);
-  topBase.vertex(0, 0, h);
-  for (int i = 0; i <= 360; i += 20) {
-    float x = cos(radians(i)) * r;
-    float y = sin(radians(i)) * r;
-    topBase.vertex(x, y, h);
-  }
-  topBase.endShape(CLOSE);
-  cylinder.addChild(topBase);
-  
-  PShape bottomBase = createShape();
-  bottomBase.beginShape(TRIANGLE_FAN);
-  bottomBase.vertex(0, 0, 0);
-  for (int i = 0; i <= 360; i += 20) {
-    float x = cos(radians(i)) * r;
-    float y = sin(radians(i)) * r;
-    bottomBase.vertex(x, y, 0);
-  }
-  bottomBase.endShape(CLOSE);
-  cylinder.addChild(bottomBase);
-  stroke(0);
-  
-  return cylinder;
+  return result;
 }
 
 
 
 PShape createSupport(float cylinderRadius , float cylinderHeight){
   PShape r = createShape(GROUP);
-  fill(0);
+  noStroke();
   r.addChild(drawCylinder(cylinderRadius,cylinderHeight));
-  r.addChild(drawCircle(cylinderRadius,-cylinderHeight/2, 0));
+  r.addChild(drawCircle(cylinderRadius,0, 0));
   PShape sph = createShape(SPHERE, cylinderRadius);
-  sph.translate(0,cylinderHeight/2,0);
+  sph.translate(0,cylinderHeight,0);
   r.addChild(sph);
-
+  r.translate(0,-cylinderHeight/2,0);
   return r;
 }
 
 
 PShape drawCylinder(float cylinderRadius , float cylinderHeight) {
-  int segments = 50; // Number of segments to approximate the cylinder
+  int segments = 360; 
   
   PShape r = createShape();
   r.beginShape(QUAD_STRIP);
@@ -134,8 +94,8 @@ PShape drawCylinder(float cylinderRadius , float cylinderHeight) {
     float x = cos(angle) * cylinderRadius;
     float z = sin(angle) * cylinderRadius;
     
-    r.vertex(x, -cylinderHeight/2, z);
-    r.vertex(x, cylinderHeight/2, z);
+    r.vertex(x, 0, z);
+    r.vertex(x, cylinderHeight, z);
   }
   r.endShape();
 
@@ -145,8 +105,9 @@ PShape drawCylinder(float cylinderRadius , float cylinderHeight) {
 PShape drawCircle(float radius, float y, float z) {
   int segments = 50;
   PShape r = createShape();
-  r.beginShape(TRIANGLE_FAN);
   noStroke();
+  fill(255);
+  r.beginShape(TRIANGLE_FAN);
   r.vertex(0, y, z);
   for (int i = 0; i <= segments; i++) {
     float angle = map(i, 0, segments, 0, TWO_PI);
