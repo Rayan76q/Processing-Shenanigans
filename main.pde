@@ -21,6 +21,7 @@ boolean move_forward_W = false, move_forward = false,
 LinkedList<PVector> listPylone;
 PVector point_depart;
 PVector point_arrive;
+float angle_rotation;
 float nb_Pylones = 15;
 
 float get_z(float x , float y){
@@ -53,7 +54,7 @@ void setup(){
   //Ajout des positions des pylones 
   point_depart = new PVector(-100,50,get_z(-100,50));
   point_arrive = new PVector(50,50,get_z(50,50));
-  float angle_rotation = ((point_arrive.x-point_depart.x)!= 0?
+  angle_rotation = ((point_arrive.x-point_depart.x)!= 0?
   PI/2-(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
   
   for(float i=0 ; i<nb_Pylones*10; i+=10){
@@ -77,7 +78,7 @@ void draw() {
   shader(myShader);
 
   background(128, 128, 128);
-  shape(monde, 0, 0);
+  //shape(monde, 0, 0);
  
 
   ex = sin(alpha)*cos(beta);
@@ -135,7 +136,14 @@ void draw() {
     popMatrix();
   }
   
+  shape(Ligne,-2*0.6*cos(angle_rotation),-2*0.6*sin(angle_rotation));
   shape(Ligne,0,0);
+  pushMatrix();
+  translate(0,0,0.31);
+  shape(Ligne,-2*0.5*cos(angle_rotation),-2*0.5*sin(angle_rotation));
+  shape(Ligne,-0.2*cos(angle_rotation),-0.2*sin(angle_rotation));
+  //shape(Ligne,0,0);
+  popMatrix();
   
   Eolienne e = new Eolienne(20,10);
   e.drawEolienne();
