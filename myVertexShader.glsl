@@ -4,6 +4,7 @@ uniform mat3 normalMatrix;
 uniform mat4 texMatrix;
 
 uniform vec4 lightPosition;
+uniform int day;
 
 attribute vec4 position;
 attribute vec4 color;
@@ -19,7 +20,7 @@ void main() {
   vec3 ecPosition = vec3(modelview * position);
   z = position.z;
   vec3 ecNormal = normalize(normalMatrix * normal);
-
+  
   vec3 direction = normalize(lightPosition.xyz - ecPosition);
   float intensity = max(0.0, dot(direction, ecNormal));
   vertColor = vec4(intensity, intensity, intensity, 1) * color;
