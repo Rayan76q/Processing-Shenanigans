@@ -21,7 +21,7 @@ boolean move_forward_W = false, move_forward = false,
 LinkedList<PVector> listPylone;
 PVector point_depart;
 PVector point_arrive;
-float nb_Pylones = 10;
+float nb_Pylones = 14;
 
 float get_z(float x , float y){
   float result = 0;
