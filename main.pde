@@ -78,6 +78,7 @@ void setup() {
 
 void draw() {
   shader(myShader);
+  myShader.set("day", frameCount%360);
   background(128, 128, 128);
   shape(monde, 0, 0);
   resetShader();
