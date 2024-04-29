@@ -2,6 +2,8 @@ import java.util.LinkedList;
 PShape monde;
 PShader myShader;
 
+PVector optimus_Prime;
+
 float camX = width/2.0, camY = height/2.0, camZ = 0;
 float posX = 0, posY = 0, posZ = -100;
 float ex, ey, ez, vitesse = 0.5;
@@ -24,6 +26,8 @@ PVector point_arrive;
 float angle_rotation;
 float nb_Pylones = 25;
 
+LinkedList<Eolienne> eol;
+LinkedList<PShape> lignes_box;
 float get_z(float x, float y) {
   float result = 0;
   float cx = -250.0;
@@ -48,14 +52,18 @@ float get_z(float x, float y) {
 
 
 void setup() {
+  
   listPylone = new LinkedList<>();
+  eol = new LinkedList<>();
+  lignes_box = new LinkedList<>();
   size(1200, 1200, P3D);
   monde = loadShape("HYPERSIMPLE/hypersimple.obj");
-
   float x1=20, y1=100, x2=40, y2=-115;
+  
   //Ajout des positions des pylones
   point_depart = new PVector(x1, y1, get_z(x1, y1));
   point_arrive = new PVector(x2, y2, get_z(x2, y2));
+  optimus_Prime = new PVector(x2+4,y2+5.5,get_z(x2+4,y2+5.5)+2.);
   angle_rotation = ((point_arrive.x-point_depart.x)!= 0?
     PI/2-(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
 
@@ -69,11 +77,32 @@ void setup() {
   createPylonBlocss(size);
   pylone = Create_Pylon(angle_rotation);
   pylone.scale(0.3);
-  frameRate(40);
-  myShader = loadShader("myFragmentShader.glsl",
-    "myVertexShader.glsl");
-
+  
+  //creation de la ligne des pylones
   Ligne = create_ligne(listPylone, angle_rotation);
+  
+  //creation des eoliennes
+   eol.add(new Eolienne(50, -100));
+   eol.add(new Eolienne(60, -100));
+   eol.add(new Eolienne(55, -105));
+   eol.add(new Eolienne(50, -105));
+   
+   //creation des lignes vers box
+   PVector lastPylonecoords=listPylone.getLast();
+   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,true,true,optimus_Prime));
+   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,false,true,optimus_Prime));
+   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,true,false,optimus_Prime));
+   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,false,false,optimus_Prime));
+   
+   //creation des lignes de box vers les eoliennes
+   for(Eolienne eo: eol){
+     lignes_box.add(create_ground_ligne(optimus_Prime,eo));
+   }
+   
+   frameRate(40);
+   //loading des shaders
+   myShader = loadShader("myFragmentShader.glsl",
+    "myVertexShader.glsl");
 }
 
 void draw() {
@@ -134,7 +163,6 @@ void draw() {
     //Ajout de pylon
     for (PVector c : listPylone) {
       pushMatrix();
-      //listPylone.add(new Pylone_coords(i,50,z));
       translate(0, 0, c.z);
       shape(pylone, c.x, c.y);
       popMatrix();
@@ -146,21 +174,24 @@ void draw() {
       translate(0, 0, 0.31);
       shape(Ligne, -2*0.5*cos(angle_rotation), -2*0.5*sin(angle_rotation));
       shape(Ligne, -0.2*cos(angle_rotation), -0.2*sin(angle_rotation));
-      //shape(Ligne,0,0);
       popMatrix();
     }
   }
 
 
   if (show_eol) {
+    pushMatrix();
+    fill(0);
+    translate(optimus_Prime.x,optimus_Prime.y,optimus_Prime.z);
+    stroke(0);
+    box(1);
+    popMatrix();
+    for(PShape ligne : lignes_box){
+      shape(ligne,0,0);
+    }
     fill(255);
-    LinkedList<Eolienne> e = new LinkedList<>();
-    e.add(new Eolienne(50, -100));
-    e.add(new Eolienne(60, -100));
-    e.add(new Eolienne(55, -105));
-    e.add(new Eolienne(50, -105));
-    for (Eolienne eol : e) {
-      eol.drawEolienne();
+    for (Eolienne eo : eol) {
+      eo.drawEolienne();
     }
   }
 }
