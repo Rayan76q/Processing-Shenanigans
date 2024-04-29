@@ -39,6 +39,7 @@ public class Eolienne{
     pushMatrix();
     pales.rotateY((frameCount!=0?0.1:0));
     fill(255);
+    stroke(255);
     translate(x,y,z+sizeEol);
     shape(forme);   
     popMatrix();

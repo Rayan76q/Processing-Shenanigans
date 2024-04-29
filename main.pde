@@ -1,4 +1,12 @@
+//import ddf.minim.*;
+//import ddf.minim.analysis.*;
+//import ddf.minim.effects.*;
+//import ddf.minim.signals.*;
+//import ddf.minim.spi.*;
+//import ddf.minim.ugens.*;
+
 import java.util.LinkedList;
+
 PShape monde;
 PShader myShader;
 
@@ -18,7 +26,8 @@ float distance = 100;
 boolean move_forward_W = false, move_forward = false,
   move_backward = false, move_backward_S = false,
   move_left = false, move_right = false,
-  move_up = false, move_down = false, show_ligne = true, show_pylone = true, show_eol = true;
+  move_up = false, move_down = false, show_ligne = true,
+  show_pylone = true, show_eol = true, vivaldi = false;
 
 LinkedList<PVector> listPylone;
 PVector point_depart;
@@ -28,6 +37,8 @@ float nb_Pylones = 25;
 
 LinkedList<Eolienne> eol;
 LinkedList<PShape> lignes_box;
+
+//AudioPlayer player;
 float get_z(float x, float y) {
   float result = 0;
   float cx = -250.0;
@@ -52,18 +63,19 @@ float get_z(float x, float y) {
 
 
 void setup() {
-  
+  //Minim minim = new Minim(this);
+  //player = minim.loadFile("VIVA_VIVALDI.mp3");
   listPylone = new LinkedList<>();
   eol = new LinkedList<>();
   lignes_box = new LinkedList<>();
   size(1200, 1200, P3D);
   monde = loadShape("HYPERSIMPLE/hypersimple.obj");
   float x1=20, y1=100, x2=40, y2=-115;
-  
+
   //Ajout des positions des pylones
   point_depart = new PVector(x1, y1, get_z(x1, y1));
   point_arrive = new PVector(x2, y2, get_z(x2, y2));
-  optimus_Prime = new PVector(x2+4,y2+5.5,get_z(x2+4,y2+5.5)+2.);
+  optimus_Prime = new PVector(x2+4, y2+5.5, get_z(x2+4, y2+5.5)+2.);
   angle_rotation = ((point_arrive.x-point_depart.x)!= 0?
     PI/2-(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
 
@@ -77,40 +89,52 @@ void setup() {
   createPylonBlocss(size);
   pylone = Create_Pylon(angle_rotation);
   pylone.scale(0.3);
-  
+
   //creation de la ligne des pylones
   Ligne = create_ligne(listPylone, angle_rotation);
-  
+  fill(255);
+  stroke(255);
   //creation des eoliennes
-   eol.add(new Eolienne(50, -100));
-   eol.add(new Eolienne(60, -100));
-   eol.add(new Eolienne(55, -105));
-   eol.add(new Eolienne(50, -105));
-   
-   //creation des lignes vers box
-   PVector lastPylonecoords=listPylone.getLast();
-   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,true,true,optimus_Prime));
-   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,false,true,optimus_Prime));
-   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,true,false,optimus_Prime));
-   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,false,false,optimus_Prime));
-   
-   //creation des lignes de box vers les eoliennes
-   for(Eolienne eo: eol){
-     lignes_box.add(create_ground_ligne(optimus_Prime,eo));
-   }
-   
-   frameRate(40);
-   //loading des shaders
-   myShader = loadShader("myFragmentShader.glsl",
+  eol.add(new Eolienne(50, -100));
+  eol.add(new Eolienne(60, -100));
+  eol.add(new Eolienne(55, -105));
+  eol.add(new Eolienne(50, -105));
+
+  //creation des lignes vers box
+  PVector lastPylonecoords=listPylone.getLast();
+  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, true, true, optimus_Prime));
+  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, false, true, optimus_Prime));
+  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, true, false, optimus_Prime));
+  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, false, false, optimus_Prime));
+
+  //creation des lignes de box vers les eoliennes
+  for (Eolienne eo : eol) {
+    lignes_box.add(create_ground_ligne(optimus_Prime, eo));
+  }
+
+  frameRate(40);
+  //loading des shaders
+  myShader = loadShader("myFragmentShader.glsl",
     "myVertexShader.glsl");
 }
 
 void draw() {
+  fill(0);
+  stroke(0);
+  background(135,206,235);
+
   shader(myShader);
-  myShader.set("day" , frameCount%360);
-  background(128, 128, 128);
+  myShader.set("day", frameCount%360);
+
+  if (vivaldi) {
+    //player.play();
+    background(135*cos((float)frameCount/10), 206*sin((float)frameCount/10), 235*sin((float)frameCount/10));
+  } 
+  //else player.pause();
+  
+
+
   shape(monde, 0, 0);
-  resetShader();
 
   ex = sin(alpha)*cos(beta);
   ey =  sin(alpha)*sin(beta);
@@ -123,8 +147,8 @@ void draw() {
 
 
   camera(posX, posY, posZ, posX + camX, posY + camY, posZ + camZ, 0, 0, -1);
-
   perspective(PI/2 + zoom, width/height, 0.01, 500);
+
 
   if (move_forward) {
     posY += ey*vitesse;
@@ -158,7 +182,7 @@ void draw() {
     posZ -=vitesse;
   }
 
-
+  resetShader();
   if (show_pylone) {
     //Ajout de pylon
     for (PVector c : listPylone) {
@@ -182,17 +206,20 @@ void draw() {
   if (show_eol) {
     pushMatrix();
     fill(0);
-    translate(optimus_Prime.x,optimus_Prime.y,optimus_Prime.z);
+    translate(optimus_Prime.x, optimus_Prime.y, optimus_Prime.z);
     stroke(0);
     box(1);
     popMatrix();
-    for(PShape ligne : lignes_box){
-      shape(ligne,0,0);
+    for (PShape ligne : lignes_box) {
+      shape(ligne, 0, 0);
     }
     fill(255);
+    stroke(255);
     for (Eolienne eo : eol) {
       eo.drawEolienne();
     }
+
+  
   }
 }
 void mouseDragged() {
@@ -216,6 +243,7 @@ void keyPressed() {
   if (keyCode == 84) show_pylone = !show_pylone;
   if (keyCode == 89) show_ligne = !show_ligne;
   if (keyCode == 85) show_eol = !show_eol;
+  if (keyCode == 86) vivaldi = !vivaldi;
 
   //zooming  ()
   if (keyCode ==75) {//K
