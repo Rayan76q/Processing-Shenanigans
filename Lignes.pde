@@ -11,7 +11,7 @@ float f(float a, float x,float beta){
 }
 
 
-PShape create_ligne(LinkedList<PVector> coords,float angle_rotation){
+PShape create_ligne(LinkedList<PVector> coords,float angle_rotation,float size,int nb_Pylons){
   float nb_points = 20;
   float p1x = coords.get(0).x+0.6*cos(angle_rotation);
   float p1y = coords.get(0).y+0.6*sin(angle_rotation);
@@ -82,7 +82,7 @@ PShape create_ligne(LinkedList<PVector> coords,float angle_rotation){
 }
 
 
-PShape create_ligne_box(float angle_rotation,PVector coords,boolean down, boolean right,PVector c){
+PShape create_ligne_box(float angle_rotation,PVector coords,boolean down, boolean right,PVector c,float size,int nb_Pylons){
   float nb_points = 20;
   float len_triangle;
   float upper = 0;

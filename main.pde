@@ -28,6 +28,7 @@ float nb_Pylones = 25;
 
 LinkedList<Eolienne> eol;
 LinkedList<PShape> lignes_box;
+
 float get_z(float x, float y) {
   float result = 0;
   float cx = -250.0;
@@ -52,6 +53,8 @@ float get_z(float x, float y) {
 
 
 void setup() {
+  float size = 1;
+  int nb_Pylons = 9;
   
   listPylone = new LinkedList<>();
   eol = new LinkedList<>();
@@ -65,7 +68,7 @@ void setup() {
   point_arrive = new PVector(x2, y2, get_z(x2, y2));
   optimus_Prime = new PVector(x2+4,y2+5.5,get_z(x2+4,y2+5.5)+2.);
   angle_rotation = ((point_arrive.x-point_depart.x)!= 0?
-    PI/2-(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
+    PI/2+(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
 
   for (float i=0; i<nb_Pylones*10; i+=10) {
     float x = point_depart.x +i/(nb_Pylones*10)*(point_arrive.x-point_depart.x);
@@ -74,12 +77,11 @@ void setup() {
     listPylone.add(new PVector(x,
       y, z));
   }
-  createPylonBlocss(size);
-  pylone = Create_Pylon(angle_rotation);
+  pylone = Create_Pylon(angle_rotation,1,nb_Pylons);
   pylone.scale(0.3);
   
   //creation de la ligne des pylones
-  Ligne = create_ligne(listPylone, angle_rotation);
+  Ligne = create_ligne(listPylone, angle_rotation,size,nb_Pylons);
   
   //creation des eoliennes
    eol.add(new Eolienne(50, -100));
@@ -89,10 +91,10 @@ void setup() {
    
    //creation des lignes vers box
    PVector lastPylonecoords=listPylone.getLast();
-   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,true,true,optimus_Prime));
-   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,false,true,optimus_Prime));
-   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,true,false,optimus_Prime));
-   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,false,false,optimus_Prime));
+   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,true,true,optimus_Prime,size,nb_Pylons));
+   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,false,true,optimus_Prime,size,nb_Pylons));
+   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,true,false,optimus_Prime,size,nb_Pylons));
+   lignes_box.add(create_ligne_box(angle_rotation,lastPylonecoords,false,false,optimus_Prime,size,nb_Pylons));
    
    //creation des lignes de box vers les eoliennes
    for(Eolienne eo: eol){
@@ -108,7 +110,7 @@ void setup() {
 void draw() {
   shader(myShader);
   background(128, 128, 128);
-  shape(monde, 0, 0);
+  //shape(monde, 0, 0);
   resetShader();
 
   ex = sin(alpha)*cos(beta);
