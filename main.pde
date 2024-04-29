@@ -103,10 +103,10 @@ fill(255);
 
   //creation des lignes vers box
   PVector lastPylonecoords=listPylone.getLast();
-  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, true, true, optimus_Prime));
-  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, false, true, optimus_Prime));
-  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, true, false, optimus_Prime));
-  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, false, false, optimus_Prime));
+  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, true, true, optimus_Prime, size, nb_Pylons));
+  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, false, true, optimus_Prime, size, nb_Pylons));
+  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, true, false, optimus_Prime, size, nb_Pylons));
+  lignes_box.add(create_ligne_box(angle_rotation, lastPylonecoords, false, false, optimus_Prime, size, nb_Pylons));
 
   //creation des lignes de box vers les eoliennes
   for (Eolienne eo : eol) {
