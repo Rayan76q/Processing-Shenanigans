@@ -6,12 +6,12 @@ float spRadius = sizeEol /60 , spHeight = sizeEol/40;
 public class Eolienne{
   float x,y,z;
   
-  PShape pales,support,poteau,forme;
+  PShape pales,support,tour,forme;
   
   public Eolienne(float x, float y){
     this.x = x;
     this.y = y;
-    this.z = get_z(x, y);
+    this.z = get_z(0, 0);
     
     PShape p1 = helice(sizeEol/8,0,0,0);
     PShape p2 = helice(sizeEol/8,0,0,0);
@@ -25,12 +25,12 @@ public class Eolienne{
     this.pales.addChild(p3);
     
     
-    this.poteau = poteau(sizeEol,0.1);
+    this.tour = cylinder(sizeEol,0.1);
     this.forme = createShape(GROUP);
     this.forme.addChild(pales);
-    this.poteau.translate(0,-0.1,-sizeEol);
+    this.tour.translate(0,-0.1,-sizeEol);
     this.support = createSupport(spRadius,spHeight);
-    this.forme.addChild(poteau);
+    this.forme.addChild(tour);
     this.support.translate(0,-spHeight/2,0);
     this.forme.addChild(support);
   }
@@ -39,8 +39,7 @@ public class Eolienne{
     pushMatrix();
     pales.rotateY((frameCount!=0?0.1:0));
     fill(255);
-    forme.scale(0.4);
-    translate(x,y,z+sizeEol*0.4);
+    translate(x,y,z+sizeEol);
     shape(forme);   
     popMatrix();
 
@@ -61,7 +60,7 @@ PShape helice(float r,float x, float y, float z){
   return result;
 }
 
-PShape poteau(float h, float r) {
+PShape cylinder(float h, float r) {
   PShape result = createShape(GROUP);
   result.addChild( drawCylinder(r,h));
   result.addChild(drawCircle(r,0,0));
