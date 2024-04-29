@@ -1,122 +1,172 @@
-float sizeEol = 10;
-int nbEol = 10;
+PShape Ligne;
 
-float spRadius = sizeEol /60 , spHeight = sizeEol/40; 
+float zmin = -202.09592, zmax = -179.59933;
 
-public class Eolienne{
-  float x,y,z;
-  
-  PShape pales,support,tour,forme;
-  
-  public Eolienne(float x, float y){
-    this.x = x;
-    this.y = y;
-    this.z = get_z(0, 0);
+float cosh(float x){
+return (exp(x)+exp(-x))/2;
+}
+
+float f(float a, float x,float beta){
+  return cosh(a*x)+x*(1-cosh(beta))-1;
+}
+
+
+PShape create_ligne(LinkedList<PVector> coords,float angle_rotation){
+  float nb_points = 20;
+  float p1x = coords.get(0).x+0.6*cos(angle_rotation);
+  float p1y = coords.get(0).y+0.6*sin(angle_rotation);
+  float p1z = coords.get(0).z+ size*(nb_Pylons-3.5)/2.0 -0.051;
+  float p2x,p2y,p2z;
+  PShape ligne = createShape(GROUP);
+  for(int i = 1 ; i<coords.size() ; i++){
+    PVector c = coords.get(i);
+    p2x = c.x+0.6*cos(angle_rotation);
+    p2y = c.y+0.6*sin(angle_rotation);
+    p2z = c.z+ size*(nb_Pylons-3.5)/2.0 -0.051;
     
-    PShape p1 = helice(sizeEol/8,0,0,0);
-    PShape p2 = helice(sizeEol/8,0,0,0);
-    PShape p3 = helice(sizeEol/8,0,0,0);
-    p2.rotateY(2*PI/3);
-    p3.rotateY(-2*PI/3);
     
-    this.pales = createShape(GROUP);
-    this.pales.addChild(p1);
-    this.pales.addChild(p2);
-    this.pales.addChild(p3);
+    float vx = p2x-p1x , vy = p2y-p1y, ex = vx/nb_points, ey = vy/nb_points;
+    float dist = sqrt(vx*vx+vy*vy);
+    float difZ = p2z-p1z;
     
-    
-    this.tour = cylinder(sizeEol,0.1);
-    this.forme = createShape(GROUP);
-    this.forme.addChild(pales);
-    this.tour.translate(0,-0.1,-sizeEol);
-    this.support = createSupport(spRadius,spHeight);
-    this.forme.addChild(tour);
-    this.support.translate(0,-spHeight/2,0);
-    this.forme.addChild(support);
+    if(difZ>0){
+      float beta = 0.7;
+      float cnst = difZ +1-dist*(1-cosh(beta));
+      float a = log(cnst+ sqrt(cnst*cnst -1))/dist;
+      while(get_z(p1x+(vx)/2,p1y+(vy)/2)+1>=p1z+f(a,sqrt(vx*vx+vy*vy)/2,beta) && beta>0.4){
+        beta-=0.05;
+        cnst = difZ +1-dist*(1-cosh(beta));
+        a = log(cnst+ sqrt(cnst*cnst -1))/dist;
+      }
+      for(int j = 0 ; j<nb_points;j++){
+        PShape segment = createShape();
+        segment.beginShape(LINES);
+        segment.stroke(0);
+        segment.strokeWeight(1.5);
+        segment.vertex(p1x+ex*j,p1y+ey*j,p1z+f(a,sqrt((ex*j)*(ex*j)+(ey*j)*(ey*j)),beta ));
+        segment.vertex(p1x+ex*(j+1),p1y+ey*(j+1),p1z+f(a,sqrt((ex*(j+1))*(ex*(j+1))+(ey*(j+1))*(ey*(j+1))),beta ));
+        segment.endShape();
+        ligne.addChild(segment);
+      }
+      
+    }
+    else{
+      float beta = 0.7;
+      difZ= -difZ;
+      float cnst = difZ +1-dist*(1-cosh(beta));
+      float a = log(cnst+ sqrt(cnst*cnst -1))/dist;
+      while(get_z(p1x+(vx)/2,p1y+(vy)/2)+1>=p1z+f(a,sqrt(vx*vx+vy*vy)/2,beta) && beta>0.4){
+        beta-=0.05;
+        cnst = difZ +1-dist*(1-cosh(beta));
+        a = log(cnst+ sqrt(cnst*cnst -1))/dist;
+      }
+      for(int j = 0 ; j<nb_points;j++){
+        PShape segment = createShape();
+        segment.beginShape(LINES);
+        segment.stroke(0);
+        segment.strokeWeight(1.5);
+        segment.vertex(p1x+ex*j,p1y+ey*j,p2z+f(a,
+        sqrt((ex*(nb_points-j))*(ex*(nb_points-j))+(ey*(nb_points-j))*(ey*(nb_points-j))), beta));
+        segment.vertex(p1x+ex*(j+1),p1y+ey*(j+1),p2z+f(a,
+        sqrt((ex*(nb_points-j-1))*(ex*(nb_points-j-1))+(ey*(nb_points-j-1))*(ey*(nb_points-j-1))),beta ));
+        segment.endShape();
+        ligne.addChild(segment);
+      }
+      
+    }
+    p1x = p2x;
+    p1y = p2y;
+    p1z = p2z;
   }
-  
-  void drawEolienne(){
-    pushMatrix();
-    pales.rotateY((frameCount!=0?0.1:0));
-    fill(255);
-    translate(x,y,z+sizeEol);
-    shape(forme);   
-    popMatrix();
+   return ligne;
+}
 
+
+PShape create_ligne_box(float angle_rotation,PVector coords,boolean down, boolean right,PVector c){
+  float nb_points = 20;
+  float len_triangle;
+  float upper = 0;
+  if(down){
+    if(right) len_triangle = 0.6;
+    else len_triangle = -0.6;
   }
-  
-  
-}
-
-PShape helice(float r,float x, float y, float z){
-  PShape result = createShape();
-  result.beginShape();
-  fill(255);
-  stroke(255);
-  result.vertex(0,0,0);
-  result.bezierVertex(r/2,r/16,r/4,4*r,r/20,0,2*r,0,0);
-  result.endShape();
-  result.translate(x,y,z);
-  return result;
-}
-
-PShape cylinder(float h, float r) {
-  PShape result = createShape(GROUP);
-  result.addChild( drawCylinder(r,h));
-  result.addChild(drawCircle(r,0,0));
-  result.addChild( drawCircle(r,h,0));
-  result.rotateX(PI/2);
-  
-  return result;
-}
-
-
-
-PShape createSupport(float cylinderRadius , float cylinderHeight){
-  PShape r = createShape(GROUP);
-  r.addChild(drawCylinder(cylinderRadius,cylinderHeight));
-  r.addChild(drawCircle(cylinderRadius,0, 0));
-  PShape sph = createShape(SPHERE, cylinderRadius);
-  sph.translate(0,cylinderHeight,0);
-  r.addChild(sph);
-  r.translate(0,-cylinderHeight/2,0);
-  return r;
-}
-
-
-PShape drawCylinder(float cylinderRadius , float cylinderHeight) {
-  int segments = 360; 
-  
-  PShape r = createShape();
-  r.beginShape(QUAD_STRIP);
-  fill(255);
-  stroke(255);
-  for (int i = 0; i <= segments; i++) {
-    float angle = map(i, 0, segments, 0, TWO_PI);
-    float x = cos(angle) * cylinderRadius;
-    float z = sin(angle) * cylinderRadius;
-    
-    r.vertex(x, 0, z);
-    r.vertex(x, cylinderHeight, z);
+  else{
+    upper = 0.31;
+    if(right) len_triangle = 0.4;
+    else len_triangle = -0.4;
   }
-  r.endShape();
-
-  return r;
+  float p1x = coords.x+(len_triangle)*cos(angle_rotation);
+  float p1y = coords.y+(len_triangle)*sin(angle_rotation);
+  float p1z = coords.z+upper+ size*(nb_Pylons-3.5)/2.0 -0.051;
+  float p2x,p2y,p2z;
+  PShape ligne = createShape(GROUP);
+    p2x = c.x;
+    p2y = c.y;
+    p2z = c.z;
+    float vx = p2x-p1x , vy = p2y-p1y, ex = vx/nb_points, ey = vy/nb_points;
+    float dist = sqrt(vx*vx+vy*vy);
+    float difZ = p2z-p1z;
+    if(difZ>0){
+      float beta = 0.7;
+      float cnst = difZ +1-dist*(1-cosh(beta));
+      float a = log(cnst+ sqrt(cnst*cnst -1))/dist;
+      while(get_z(p1x+(vx)/2,p1y+(vy)/2)+1>=p1z+f(a,sqrt(vx*vx+vy*vy)/2,beta) && beta>0.4){
+        beta-=0.05;
+        cnst = difZ +1-dist*(1-cosh(beta));
+        a = log(cnst+ sqrt(cnst*cnst -1))/dist;
+      }
+      for(int j = 0 ; j<nb_points;j++){
+        PShape segment = createShape();
+        segment.beginShape(LINES);
+        segment.stroke(0);
+        segment.strokeWeight(1.5);
+        segment.vertex(p1x+ex*j,p1y+ey*j,p1z+f(a,sqrt((ex*j)*(ex*j)+(ey*j)*(ey*j)),beta ));
+        segment.vertex(p1x+ex*(j+1),p1y+ey*(j+1),p1z+f(a,sqrt((ex*(j+1))*(ex*(j+1))+(ey*(j+1))*(ey*(j+1))),beta ));
+        segment.endShape();
+        ligne.addChild(segment);
+      }
+    }
+    else{
+      float beta = 0.7;
+      difZ= -difZ;
+      float cnst = difZ +1-dist*(1-cosh(beta));
+      float a = log(cnst+ sqrt(cnst*cnst -1))/dist;
+      while(get_z(p1x+(vx)/2,p1y+(vy)/2)+1>=p1z+f(a,sqrt(vx*vx+vy*vy)/2,beta) && beta>0.4){
+        beta-=0.05;
+        cnst = difZ +1-dist*(1-cosh(beta));
+        a = log(cnst+ sqrt(cnst*cnst -1))/dist;
+      }
+      for(int j = 0 ; j<nb_points;j++){
+        PShape segment = createShape();
+        segment.beginShape(LINES);
+        segment.stroke(0);
+        segment.strokeWeight(1.5);
+        segment.vertex(p1x+ex*j,p1y+ey*j,p2z+f(a,
+        sqrt((ex*(nb_points-j))*(ex*(nb_points-j))+(ey*(nb_points-j))*(ey*(nb_points-j))), beta));
+        segment.vertex(p1x+ex*(j+1),p1y+ey*(j+1),p2z+f(a,
+        sqrt((ex*(nb_points-j-1))*(ex*(nb_points-j-1))+(ey*(nb_points-j-1))*(ey*(nb_points-j-1))),beta ));
+        segment.endShape();
+        ligne.addChild(segment);
+      }
+  }
+   return ligne;
 }
 
-PShape drawCircle(float radius, float y, float z) {
-  int segments = 50;
-  PShape r = createShape();
-  r.beginShape(TRIANGLE_FAN);
-  fill(255);
-  stroke(255);
-  r.vertex(0, y, z);
-  for (int i = 0; i <= segments; i++) {
-    float angle = map(i, 0, segments, 0, TWO_PI);
-    float x = cos(angle) * radius;
-    float z2 = sin(angle) * radius;
-    r.vertex(x, y, z2);
-  }
-  r.endShape();
-  return r;
+PShape create_ground_ligne(PVector src, Eolienne tgt){
+  float p1x = src.x ,p1y = src.y;
+  float p2x = tgt.x, p2y = tgt.y;
+  float nb_points = 100;
+  float vx = p2x-p1x , vy = p2y-p1y, ex = vx/nb_points, ey = vy/nb_points;
+  PShape ligne = createShape(GROUP);
+  for(int j = 0 ; j<nb_points;j++){
+        PShape segment = createShape();
+        segment.beginShape(LINES);
+        segment.stroke(0);
+        segment.strokeWeight(4);
+        segment.vertex(p1x+ex*j,p1y+ey*j,get_z(p1x+ex*j,p1y+ey*j)+0.4);
+        segment.vertex(p1x+ex*(j+1),p1y+ey*(j+1),get_z(p1x+ex*(j+1),p1y+ey*(j+1))+0.4);
+        segment.endShape();
+        ligne.addChild(segment);
+      }
+   return ligne;
 }
