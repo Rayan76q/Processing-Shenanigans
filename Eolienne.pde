@@ -37,7 +37,7 @@ public class Eolienne{
   
   void drawEolienne(){
     pushMatrix();
-    pales.rotateY((frameCount!=0?0.1:0));
+    pales.rotateY(0.1);
     fill(255);
     stroke(255);
     translate(x,y,z+sizeEol);

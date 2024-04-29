@@ -63,7 +63,9 @@ float get_z(float x, float y) {
 
 
 void setup() {
-  //Minim minim = new Minim(this);
+  float size = 1;
+  int nb_Pylons = 9;
+//Minim minim = new Minim(this);
   //player = minim.loadFile("VIVA_VIVALDI.mp3");
   listPylone = new LinkedList<>();
   eol = new LinkedList<>();
@@ -77,7 +79,7 @@ void setup() {
   point_arrive = new PVector(x2, y2, get_z(x2, y2));
   optimus_Prime = new PVector(x2+4, y2+5.5, get_z(x2+4, y2+5.5)+2.);
   angle_rotation = ((point_arrive.x-point_depart.x)!= 0?
-    PI/2-(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
+    PI/2+(float)Math.atan((point_arrive.y-point_depart.y)/(point_arrive.x-point_depart.x)):0);
 
   for (float i=0; i<nb_Pylones*10; i+=10) {
     float x = point_depart.x +i/(nb_Pylones*10)*(point_arrive.x-point_depart.x);
@@ -86,13 +88,12 @@ void setup() {
     listPylone.add(new PVector(x,
       y, z));
   }
-  createPylonBlocss(size);
-  pylone = Create_Pylon(angle_rotation);
+  pylone = Create_Pylon(angle_rotation, 1, nb_Pylons);
   pylone.scale(0.3);
 
   //creation de la ligne des pylones
-  Ligne = create_ligne(listPylone, angle_rotation);
-  fill(255);
+  Ligne = create_ligne(listPylone, angle_rotation, size, nb_Pylons);
+fill(255);
   stroke(255);
   //creation des eoliennes
   eol.add(new Eolienne(50, -100));

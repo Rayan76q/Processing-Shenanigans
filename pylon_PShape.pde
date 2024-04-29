@@ -1,14 +1,4 @@
-static final int nb_Pylons=9;
-float size = 1;
-float coneSize = 5*size*pow(0.9, nb_Pylons);
 PShape pylone;
-PShape pylon_block[]= new PShape[nb_Pylons];;
-
-//void setup() {
-// size(400, 400, P3D);
-//  createPylonBlocss(size);
-//  pylone = Create_Pylon();
-//}
 
 PShape myCone(float sideSize, int nbSide, float x, float y, float z,float w, int dir) {
   //dir :
@@ -45,7 +35,8 @@ PShape myCone(float sideSize, int nbSide, float x, float y, float z,float w, int
   return shape0;
 }
 
-void createPylonBlocss(float size) {
+PShape[] createPylonBlocss(float size, int nb_Pylons) {
+  PShape pylon_block[]= new PShape[nb_Pylons];;
   // Define the pylon_block
   pylon_block[0] = createShape();
   pylon_block[0].beginShape(LINES);
@@ -64,6 +55,7 @@ void createPylonBlocss(float size) {
     createPylonBlock(size*pow(0.9, i), pylon_block[i]);
     pylon_block[i].endShape();
   }
+  return pylon_block;
 }
 
 void createPylonBlock(float size, PShape pylon_block) {
@@ -144,8 +136,10 @@ void createPylonBlock(float size, PShape pylon_block) {
   pylon_block.vertex(size*0.9, size*0.9, size*0.9);
 }
 
-PShape Create_Pylon(float angle_mort) {
+PShape Create_Pylon(float angle_mort,float size,int nb_Pylons) {
   PShape shape = createShape(GROUP);
+  float coneSize = 5*size*pow(0.9, nb_Pylons);
+  PShape[] pylon_block = createPylonBlocss(size,nb_Pylons);
   for (int i=0; i <nb_Pylons; i++) {
     shape.addChild(pylon_block[i]);
   }
@@ -170,18 +164,3 @@ PShape Create_Pylon(float angle_mort) {
   shape.rotateZ(angle_mort);
   return shape;
 }
-
-
-//void draw() {
-//  background(255);
-//  lights();
-//  translate(width/2, height/2);
-//  rotateX(PI/2);
-//   //rotateZ(frameCount * 0.01);
-//  //rotateY(frameCount * 0.01);
-//  //shape(cube);
-//  //rotateY(mouseY);
-//  shape(pylone,0,0);
-//  //rotateX(PI/3.0);
-//  //translate(
-//}
