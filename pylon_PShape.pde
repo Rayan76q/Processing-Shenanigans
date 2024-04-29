@@ -1,11 +1,4 @@
-//static final int nb_Pylons=9;
 PShape pylone;
-
-//void setup() {
-// size(400, 400, P3D);
-//  createPylonBlocss(size);
-//  pylone = Create_Pylon();
-//}
 
 PShape myCone(float sideSize, int nbSide, float x, float y, float z,float w, int dir) {
   //dir :
@@ -171,18 +164,3 @@ PShape Create_Pylon(float angle_mort,float size,int nb_Pylons) {
   shape.rotateZ(angle_mort);
   return shape;
 }
-
-
-//void draw() {
-//  background(255);
-//  lights();
-//  translate(width/2, height/2);
-//  rotateX(PI/2);
-//   //rotateZ(frameCount * 0.01);
-//  //rotateY(frameCount * 0.01);
-//  //shape(cube);
-//  //rotateY(mouseY);
-//  shape(pylone,0,0);
-//  //rotateX(PI/3.0);
-//  //translate(
-//}
